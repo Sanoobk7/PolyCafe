@@ -103,7 +103,7 @@ public class IDCardManagementJDialog extends javax.swing.JDialog {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Danh sách", jPanel1);
+        jTabbedPane1.addTab("DANH SÁCH", jPanel1);
 
         jLabel1.setText("Mã thẻ");
 
@@ -219,7 +219,7 @@ public class IDCardManagementJDialog extends javax.swing.JDialog {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jTabbedPane1.addTab("Biểu mẫu", jPanel2);
+        jTabbedPane1.addTab("BIỂU MẪU", jPanel2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
