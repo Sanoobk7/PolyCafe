@@ -49,6 +49,7 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
         jScrollPane1.setViewportView(jTextArea1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Báo cáo thống kê");
 
         jLabel1.setText("Từ ngày:");
 

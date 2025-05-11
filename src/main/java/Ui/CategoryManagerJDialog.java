@@ -50,6 +50,7 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
         jButton11 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Quản lý loại đồ uống");
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete.png"))); // NOI18N
         jButton1.setText("Bỏ chọn chất cả");
