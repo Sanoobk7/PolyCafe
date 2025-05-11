@@ -3,18 +3,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package Ui;
-
+import Ui.*;
 /**
  *
  * @author Home
  */
 public class PolyCafeJFrame extends javax.swing.JFrame {
-
+ private AccountManagementJDialog AMD;
     /**
      * Creates new form PolyCafeJFrame
      */
     public PolyCafeJFrame() {
         initComponents();
+        setResizable(false);
+        setLocationRelativeTo(null);
+    }
+    void openAMD(){
+        new AccountManagementJDialog(this, true).setVisible(true);
     }
 
     /**
@@ -49,6 +54,11 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
         jPanel2.setForeground(new java.awt.Color(255, 153, 0));
 
         jButton5.setText("Kết thúc");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText("Bán hàng");
 
@@ -108,6 +118,11 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
         jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 390, 250, 79));
 
         jButton11.setText("Người sử dụng");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 390, 250, 79));
 
         jButton12.setText("doanh thu");
@@ -163,6 +178,15 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        dispose();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        openAMD();
+
+    }//GEN-LAST:event_jButton11ActionPerformed
 
     /**
      * @param args the command line arguments
