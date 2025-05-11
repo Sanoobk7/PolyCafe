@@ -93,19 +93,24 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton10.setText("Đổi mật khẩu");
+        jButton10.setText("thẻ định danh");
         jPanel1.add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 300, 250, 79));
 
-        jButton9.setText("Đổi mật khẩu");
+        jButton9.setText("Loại đồ uống");
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 300, 250, 79));
 
         jButton4.setText("Phiếu bán hàng");
         jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 390, 250, 79));
 
-        jButton11.setText("Đổi mật khẩu");
+        jButton11.setText("Người sử dụng");
         jPanel1.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 390, 250, 79));
 
-        jButton12.setText("Đổi mật khẩu");
+        jButton12.setText("doanh thu");
         jPanel1.add(jButton12, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 390, 250, 79));
 
         jButton13.setText("Đồ uống");
@@ -154,6 +159,10 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton13ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton9ActionPerformed
 
     /**
      * @param args the command line arguments
