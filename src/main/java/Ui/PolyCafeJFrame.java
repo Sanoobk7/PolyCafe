@@ -9,7 +9,7 @@ import Ui.*;
  * @author Home
  */
 public class PolyCafeJFrame extends javax.swing.JFrame {
- private AccountManagementJDialog AMD;
+ 
     /**
      * Creates new form PolyCafeJFrame
      */
@@ -18,9 +18,34 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
         setResizable(false);
         setLocationRelativeTo(null);
     }
-    void openAMD(){
+    void openDoiMatKhau(){
+        new ChangePasswordJDialog(this, true).setVisible(true);
+    }
+    void openLichSu(){
+        new HistoryJDialog(this, true).setVisible(true);
+    }
+    void openSale(){
+        new SaleJDialog(this, true).setVisible(true);
+    }
+    void openQuanLyDoUong(){
+        new DrinkManagementJDialog(this, true).setVisible(true);
+    }
+    void openLoaiDoUong(){
+        new CategoryManagerJDialog(this, true).setVisible(true);
+    }
+    void openTheDinhDanh(){
+        new IDCardManagementJDialog(this, true).setVisible(true);
+    }
+    void openPhieuBanHang(){
+        new BillManagementJDialog(this, true).setVisible(true);
+    }
+    void openQuanLyNguoiDung(){
         new AccountManagementJDialog(this, true).setVisible(true);
     }
+    void openBaoCaoThongKe(){
+        new RevenueStatisticsJDialog(this, true).setVisible(true);
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -32,19 +57,19 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel2 = new javax.swing.JPanel();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
+        BtnKetThuc = new javax.swing.JButton();
+        BtnBanHang = new javax.swing.JButton();
+        BtnLichSu = new javax.swing.JButton();
+        BtnDoiMatKhau = new javax.swing.JButton();
         Usertxt = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jButton10 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
-        jButton12 = new javax.swing.JButton();
-        jButton13 = new javax.swing.JButton();
+        BtnTheDinhDanh = new javax.swing.JButton();
+        BtnLoaiDoUong = new javax.swing.JButton();
+        BtnPhieuBanHang = new javax.swing.JButton();
+        BtnNguoiSuDung = new javax.swing.JButton();
+        BtnDoanhThu = new javax.swing.JButton();
+        BtnDoUong = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -53,18 +78,33 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 153, 0)));
         jPanel2.setForeground(new java.awt.Color(255, 153, 0));
 
-        jButton5.setText("Kết thúc");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        BtnKetThuc.setText("Kết thúc");
+        BtnKetThuc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                BtnKetThucActionPerformed(evt);
             }
         });
 
-        jButton6.setText("Bán hàng");
+        BtnBanHang.setText("Bán hàng");
+        BtnBanHang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnBanHangActionPerformed(evt);
+            }
+        });
 
-        jButton7.setText("Lịch sử");
+        BtnLichSu.setText("Lịch sử");
+        BtnLichSu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnLichSuActionPerformed(evt);
+            }
+        });
 
-        jButton8.setText("Đổi mật khẩu");
+        BtnDoiMatKhau.setText("Đổi mật khẩu");
+        BtnDoiMatKhau.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnDoiMatKhauActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -73,12 +113,12 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
+                    .addComponent(BtnBanHang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(BtnDoiMatKhau, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(BtnKetThuc, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                    .addComponent(BtnLichSu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -86,12 +126,12 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(BtnLichSu, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+                    .addComponent(BtnBanHang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(BtnKetThuc, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+                    .addComponent(BtnDoiMatKhau, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -103,38 +143,53 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton10.setText("thẻ định danh");
-        jPanel1.add(jButton10, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 300, 250, 79));
-
-        jButton9.setText("Loại đồ uống");
-        jButton9.addActionListener(new java.awt.event.ActionListener() {
+        BtnTheDinhDanh.setText("thẻ định danh");
+        BtnTheDinhDanh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
+                BtnTheDinhDanhActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton9, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 300, 250, 79));
+        jPanel1.add(BtnTheDinhDanh, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 300, 250, 79));
 
-        jButton4.setText("Phiếu bán hàng");
-        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 390, 250, 79));
-
-        jButton11.setText("Người sử dụng");
-        jButton11.addActionListener(new java.awt.event.ActionListener() {
+        BtnLoaiDoUong.setText("Loại đồ uống");
+        BtnLoaiDoUong.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton11ActionPerformed(evt);
+                BtnLoaiDoUongActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton11, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 390, 250, 79));
+        jPanel1.add(BtnLoaiDoUong, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 300, 250, 79));
 
-        jButton12.setText("doanh thu");
-        jPanel1.add(jButton12, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 390, 250, 79));
-
-        jButton13.setText("Đồ uống");
-        jButton13.addActionListener(new java.awt.event.ActionListener() {
+        BtnPhieuBanHang.setText("Phiếu bán hàng");
+        BtnPhieuBanHang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton13ActionPerformed(evt);
+                BtnPhieuBanHangActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton13, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 250, 79));
+        jPanel1.add(BtnPhieuBanHang, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 390, 250, 79));
+
+        BtnNguoiSuDung.setText("Người sử dụng");
+        BtnNguoiSuDung.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnNguoiSuDungActionPerformed(evt);
+            }
+        });
+        jPanel1.add(BtnNguoiSuDung, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 390, 250, 79));
+
+        BtnDoanhThu.setText("doanh thu");
+        BtnDoanhThu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnDoanhThuActionPerformed(evt);
+            }
+        });
+        jPanel1.add(BtnDoanhThu, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 390, 250, 79));
+
+        BtnDoUong.setText("Đồ uống");
+        BtnDoUong.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnDoUongActionPerformed(evt);
+            }
+        });
+        jPanel1.add(BtnDoUong, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 250, 79));
 
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/coffee-shop.jpg"))); // NOI18N
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 800, 480));
@@ -171,22 +226,45 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton13ActionPerformed
+    private void BtnDoUongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnDoUongActionPerformed
+        openQuanLyDoUong();
+    }//GEN-LAST:event_BtnDoUongActionPerformed
 
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton9ActionPerformed
+    private void BtnLoaiDoUongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLoaiDoUongActionPerformed
+       openLoaiDoUong();
+    }//GEN-LAST:event_BtnLoaiDoUongActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void BtnKetThucActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnKetThucActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_BtnKetThucActionPerformed
 
-    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-        openAMD();
+    private void BtnNguoiSuDungActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNguoiSuDungActionPerformed
+        openQuanLyNguoiDung();
+    }//GEN-LAST:event_BtnNguoiSuDungActionPerformed
 
-    }//GEN-LAST:event_jButton11ActionPerformed
+    private void BtnLichSuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLichSuActionPerformed
+        openLichSu();
+    }//GEN-LAST:event_BtnLichSuActionPerformed
+
+    private void BtnDoiMatKhauActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnDoiMatKhauActionPerformed
+        openDoiMatKhau();
+    }//GEN-LAST:event_BtnDoiMatKhauActionPerformed
+
+    private void BtnBanHangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBanHangActionPerformed
+        openSale();
+    }//GEN-LAST:event_BtnBanHangActionPerformed
+
+    private void BtnTheDinhDanhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnTheDinhDanhActionPerformed
+        openTheDinhDanh();
+    }//GEN-LAST:event_BtnTheDinhDanhActionPerformed
+
+    private void BtnPhieuBanHangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPhieuBanHangActionPerformed
+        openPhieuBanHang();
+    }//GEN-LAST:event_BtnPhieuBanHangActionPerformed
+
+    private void BtnDoanhThuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnDoanhThuActionPerformed
+        openBaoCaoThongKe();
+    }//GEN-LAST:event_BtnDoanhThuActionPerformed
 
     /**
      * @param args the command line arguments
@@ -224,17 +302,17 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnBanHang;
+    private javax.swing.JButton BtnDoUong;
+    private javax.swing.JButton BtnDoanhThu;
+    private javax.swing.JButton BtnDoiMatKhau;
+    private javax.swing.JButton BtnKetThuc;
+    private javax.swing.JButton BtnLichSu;
+    private javax.swing.JButton BtnLoaiDoUong;
+    private javax.swing.JButton BtnNguoiSuDung;
+    private javax.swing.JButton BtnPhieuBanHang;
+    private javax.swing.JButton BtnTheDinhDanh;
     private javax.swing.JLabel Usertxt;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton13;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
