@@ -15,7 +15,7 @@ import javax.swing.Timer;
  * @author Admin
  */
 public class WelcomeControllerJDialog extends javax.swing.JDialog {
-
+//meow
     /**
      * Creates new form WelcomeController
      */
