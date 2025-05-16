@@ -16,6 +16,7 @@ public class HistoryJDialog extends javax.swing.JDialog {
     public HistoryJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**

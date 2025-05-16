@@ -75,4 +75,6 @@ public class Users {
     public void setManager(boolean manager) {
         this.manager = manager;
     }
+
+    
 }

@@ -8,14 +8,20 @@ package poly.cafe.ui;
  * @author Home
  */
 public class PolyCafeJFrame extends javax.swing.JFrame {
- 
+ private boolean isManager;
     /**
      * Creates new form PolyCafeJFrame
      */
     public PolyCafeJFrame() {
+        
         initComponents();
         setResizable(false);
         setLocationRelativeTo(null);
+        configureButtons();
+    }
+    public void setUserRole(boolean isManager) {
+        this.isManager = isManager;
+        configureButtons(); // Cập nhật giao diện
     }
     void openDoiMatKhau(){
         new ChangePasswordJDialog(this, true).setVisible(true);
@@ -44,7 +50,26 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
     void openBaoCaoThongKe(){
         new RevenueStatisticsJDialog(this, true).setVisible(true);
     }
-    
+    private void configureButtons() {
+        if (isManager) {
+            // hi nút cho quản lý
+            BtnDoanhThu.setVisible(true);
+            BtnLoaiDoUong.setVisible(true);
+            BtnDoUong.setVisible(true);
+            BtnNguoiSuDung.setVisible(true);
+            BtnPhieuBanHang.setVisible(true);
+            BtnTheDinhDanh.setVisible(true);
+        } else {
+            // Hiện nút cho nhân viên
+            BtnDoanhThu.setVisible(false);
+            BtnLoaiDoUong.setVisible(false);
+            BtnDoUong.setVisible(false);
+            BtnNguoiSuDung.setVisible(false);
+            BtnPhieuBanHang.setVisible(false);
+            BtnTheDinhDanh.setVisible(false);
+
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -293,6 +318,7 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new PolyCafeJFrame().setVisible(true);

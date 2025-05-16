@@ -16,6 +16,7 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
     public CategoryManagerJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**

@@ -16,6 +16,7 @@ public class IDCardManagementJDialog extends javax.swing.JDialog {
     public IDCardManagementJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**

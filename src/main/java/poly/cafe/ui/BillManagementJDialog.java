@@ -16,6 +16,7 @@ public class BillManagementJDialog extends javax.swing.JDialog {
     public BillManagementJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**

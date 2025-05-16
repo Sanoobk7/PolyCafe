@@ -16,6 +16,7 @@ public class DrinkJDialog extends javax.swing.JDialog {
     public DrinkJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     /**
