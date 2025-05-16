@@ -1,7 +1,6 @@
 package poly.cafe.util;
 
 import java.time.LocalDate;
-import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,11 +8,12 @@ import lombok.Data;
 @Data
 public class TimeRange {
 
-    private Date begin = new Date();
-    private Date end = new Date();
+    private LocalDate begin = LocalDate.now();
+    private LocalDate end = LocalDate.now();
     
     private TimeRange(LocalDate begin, LocalDate end) {
-        this(java.sql.Date.valueOf(begin), java.sql.Date.valueOf(end));
+        this.begin = begin;
+        this.end = end;
     }
     
     public static TimeRange today() {
