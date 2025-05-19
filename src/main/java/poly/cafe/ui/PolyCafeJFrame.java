@@ -52,21 +52,23 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
     }
     private void configureButtons() {
         if (isManager) {
-            // hi nút cho quản lý
+            // hiện nút cho quản lý
             BtnDoanhThu.setVisible(true);
             BtnLoaiDoUong.setVisible(true);
             BtnDoUong.setVisible(true);
             BtnNguoiSuDung.setVisible(true);
             BtnPhieuBanHang.setVisible(true);
             BtnTheDinhDanh.setVisible(true);
+            Usertxt.setText("Quản lý");
         } else {
-            // Hiện nút cho nhân viên
+            // ẩn nút cho nhân viên
             BtnDoanhThu.setVisible(false);
             BtnLoaiDoUong.setVisible(false);
             BtnDoUong.setVisible(false);
             BtnNguoiSuDung.setVisible(false);
             BtnPhieuBanHang.setVisible(false);
             BtnTheDinhDanh.setVisible(false);
+            Usertxt.setText("Nhân viên");
 
         }
     }
