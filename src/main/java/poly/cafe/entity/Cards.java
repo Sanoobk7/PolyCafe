@@ -9,7 +9,7 @@ package poly.cafe.entity;
  * @author Home
  */
 public class Cards {
-     private int id;
+    private int id;
     private int status;
 
     public Cards() {

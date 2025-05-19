@@ -202,42 +202,7 @@ if (dao.checkUsernameExists(username)) {
         JOptionPane.showMessageDialog(this, "Cập nhật tài khoản thất bại!");
     }
 }
-//   void FindByClick(){
-// 
-//    try {
-//        JTable table = (JTable) AccTable.getViewport().getView();
-//        int row = table.getSelectedRow();
-//        if (row >= 0) {
-//            String username = (String) table.getValueAt(row, 0);
-//            AccountManagementDao dao = new AccountManagementDao();
-//            Users user = dao.findByID(username);
-//            if (user != null) {
-//                txtTenDangNhap.setText(user.getUsername());
-//                txtMatKhau.setText(user.getPassword());
-//                txtXacNhanMatKhau.setText(user.getPassword());
-//                txtHoVaTen.setText(user.getFullname());
-//
-//                if (user.isManager()) {
-//                    rdoQuanLy.setSelected(true);
-//                } else {
-//                    rdoNhanVien.setSelected(true);
-//                }
-//
-//                if (user.isEnabled()) {
-//                    rdoHoatDong.setSelected(true);
-//                } else {
-//                    rdoTamDung.setSelected(true);
-//                }
-//            }
-//        }
-//    } catch (Exception ex) {
-//        ex.printStackTrace();
-//    }
-//    loaddatatotable();
-//
-//
-//   }
-   // Lấy JTable từ JScrollPane AccTable
+
 
 private void updateFormFromRow(int row) {
     if (row >= 0 && row < jTable1.getRowCount()) {
