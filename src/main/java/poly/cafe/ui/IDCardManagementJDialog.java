@@ -48,12 +48,17 @@ JTable table;
     List<Cards> list = dao.findAll();
     for (Cards c : list) {
 
-String statusText = switch (c.getStatus()) {
-    case 1 -> "Đang hoạt động";
-    case 2 -> "Lỗi";
-    case 3 -> "Thất bại";
-    default -> "Không xác định";
-};
+String statusText;
+if (c.getStatus() == 1) {
+    statusText = "Đang hoạt động";
+} else if (c.getStatus() == 2) {
+    statusText = "Lỗi";
+} else if (c.getStatus() == 3) {
+    statusText = "Thất bại";
+} else {
+    statusText = "Không xác định";
+}
+ 
 
         tableModel.addRow(new Object[]{
             c.getId(),
