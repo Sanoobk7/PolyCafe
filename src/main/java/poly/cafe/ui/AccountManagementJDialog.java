@@ -33,6 +33,11 @@ JTable table;
     }
     //Username,Password,Enabled,Fullname,Photo,Manager
     private void initTable() {
+        // Thiết lập bảng jTable1 với các cột và kiểu dữ liệu tương ứng
+        // Mỗi cột tương ứng với một kiểu dữ liệu
+        // Xác định kiểu dữ liệu của từng cột (để hiển thị checkbox ở cột cuối)
+        // Chỉ cho phép chỉnh sửa cột cuối cùng (checkbox "Chọn")
+        //mấy cái này đều cần cái Dao.java hỗ trợ để làm cho dễ
     tableModel = new DefaultTableModel(new String[]{"Tên đăng nhập", "Mật khẩu", "Trạng thái", "Họ và tên", "Ảnh", "Vai trò", "Chọn"}, 0) {
         Class<?>[] types = new Class<?>[]{String.class, String.class, String.class, String.class, String.class, String.class, Boolean.class};
         @Override
@@ -45,8 +50,9 @@ JTable table;
         }
     };
     jTable1.setModel(tableModel);
+    // Gán mô hình dữ liệu cho bảng
 }
-
+//load thông tin từ cơ sở dữ liệu lên bảng 
    public void loaddatatotable() {
     tableModel.setRowCount(0);
     AccountManagementDao dao = new AccountManagementDao();
