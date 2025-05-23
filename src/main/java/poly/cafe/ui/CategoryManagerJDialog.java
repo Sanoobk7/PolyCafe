@@ -4,11 +4,19 @@
  */
 package poly.cafe.ui;
 
+import poly.cafe.ui.manager.CategoryController;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import poly.cafe.dao.CategoryDAO;
+import poly.cafe.dao.impl.CategoryDAOImpl;
+import poly.cafe.entity.Categories;
+import poly.cafe.util.XDialog;
+
 /**
  *
  * @author Home
  */
-public class CategoryManagerJDialog extends javax.swing.JDialog {
+public class CategoryManagerJDialog extends javax.swing.JDialog implements CategoryController{
 
     /**
      * Creates new form CategoryManagerJDialog
@@ -28,41 +36,61 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        tabs = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnUncheckAll = new javax.swing.JButton();
+        btnDeleteCheckedItems = new javax.swing.JButton();
+        btnCheckAll = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblCategories = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtId = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtName = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
+        btnCreate = new javax.swing.JButton();
+        btnUpdate = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
+        btnMoveNext = new javax.swing.JButton();
+        btnMovePrevious = new javax.swing.JButton();
+        btnMoveFirst = new javax.swing.JButton();
+        btnMoveLast = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Quản lý loại đồ uống");
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete.png"))); // NOI18N
-        jButton1.setText("Bỏ chọn chất cả");
+        btnUncheckAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete.png"))); // NOI18N
+        btnUncheckAll.setText("Bỏ chọn chất cả");
+        btnUncheckAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUncheckAllActionPerformed(evt);
+            }
+        });
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/trash.png"))); // NOI18N
-        jButton2.setText("Xóa các mục được chọn");
+        btnDeleteCheckedItems.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/trash.png"))); // NOI18N
+        btnDeleteCheckedItems.setText("Xóa các mục được chọn");
+        btnDeleteCheckedItems.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteCheckedItemsActionPerformed(evt);
+            }
+        });
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/accept.png"))); // NOI18N
-        jButton3.setText("Chọn tất cả");
+        btnCheckAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/accept.png"))); // NOI18N
+        btnCheckAll.setText("Chọn tất cả");
+        btnCheckAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCheckAllActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblCategories.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -81,7 +109,12 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        tblCategories.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblCategoriesMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblCategories);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -89,11 +122,11 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnCheckAll, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnUncheckAll, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(btnDeleteCheckedItems)
                 .addContainerGap(52, Short.MAX_VALUE))
             .addComponent(jScrollPane1)
         );
@@ -103,13 +136,13 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCheckAll, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUncheckAll, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDeleteCheckedItems, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Danh sách", jPanel1);
+        tabs.addTab("Danh sách", jPanel1);
 
         jLabel1.setText("Mã loại");
 
@@ -117,30 +150,65 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add.png"))); // NOI18N
-        jButton4.setText("Tạo mới");
-
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/edit.png"))); // NOI18N
-        jButton5.setText("Cập nhập");
-
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/trash.png"))); // NOI18N
-        jButton6.setText("Xóa");
-
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
-        jButton7.setText("Làm mới");
-
-        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/next.png"))); // NOI18N
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
+        btnCreate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add.png"))); // NOI18N
+        btnCreate.setText("Tạo mới");
+        btnCreate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                btnCreateActionPerformed(evt);
             }
         });
 
-        jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/back.png"))); // NOI18N
+        btnUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/edit.png"))); // NOI18N
+        btnUpdate.setText("Cập nhập");
+        btnUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateActionPerformed(evt);
+            }
+        });
 
-        jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Fisrt.png"))); // NOI18N
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/trash.png"))); // NOI18N
+        btnDelete.setText("Xóa");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
-        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/last.png"))); // NOI18N
+        btnClear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
+        btnClear.setText("Làm mới");
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
+            }
+        });
+
+        btnMoveNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/next.png"))); // NOI18N
+        btnMoveNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoveNextActionPerformed(evt);
+            }
+        });
+
+        btnMovePrevious.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/back.png"))); // NOI18N
+        btnMovePrevious.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMovePreviousActionPerformed(evt);
+            }
+        });
+
+        btnMoveFirst.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Fisrt.png"))); // NOI18N
+        btnMoveFirst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoveFirstActionPerformed(evt);
+            }
+        });
+
+        btnMoveLast.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/last.png"))); // NOI18N
+        btnMoveLast.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMoveLastActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -149,20 +217,20 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCreate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnUpdate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnClear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 140, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-                    .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnMoveFirst, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                    .addComponent(btnMovePrevious, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
-                    .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnMoveNext, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                    .addComponent(btnMoveLast, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(12, 12, 12))
         );
         jPanel3Layout.setVerticalGroup(
@@ -170,16 +238,16 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5)
-                    .addComponent(jButton8)
-                    .addComponent(jButton9))
+                    .addComponent(btnCreate)
+                    .addComponent(btnUpdate)
+                    .addComponent(btnMoveNext)
+                    .addComponent(btnMovePrevious))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnClear, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnMoveFirst, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnMoveLast, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -189,8 +257,8 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1)
-                    .addComponent(jTextField2)
+                    .addComponent(txtId)
+                    .addComponent(txtName)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,35 +274,98 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 155, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Biểu mẫu", jPanel2);
+        tabs.addTab("Biểu mẫu", jPanel2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(tabs)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(tabs, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    private void btnMoveNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveNextActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton8ActionPerformed
+        this.moveNext();
+    }//GEN-LAST:event_btnMoveNextActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        this.open();
+    }//GEN-LAST:event_formWindowOpened
+
+    private void tblCategoriesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCategoriesMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            this.edit();
+        }
+    }//GEN-LAST:event_tblCategoriesMouseClicked
+
+    private void btnCheckAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCheckAllActionPerformed
+        // TODO add your handling code here:
+        this.checkAll();
+    }//GEN-LAST:event_btnCheckAllActionPerformed
+
+    private void btnUncheckAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUncheckAllActionPerformed
+        // TODO add your handling code here:
+        this.uncheckAll();
+    }//GEN-LAST:event_btnUncheckAllActionPerformed
+
+    private void btnDeleteCheckedItemsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteCheckedItemsActionPerformed
+        // TODO add your handling code here:
+        this.deleteCheckedItems();
+    }//GEN-LAST:event_btnDeleteCheckedItemsActionPerformed
+
+    private void btnCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCreateActionPerformed
+        // TODO add your handling code here:
+        this.create();
+    }//GEN-LAST:event_btnCreateActionPerformed
+
+    private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
+        // TODO add your handling code here:
+        this.update();
+    }//GEN-LAST:event_btnUpdateActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        this.delete();
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
+        // TODO add your handling code here:
+        this.clear();
+    }//GEN-LAST:event_btnClearActionPerformed
+
+    private void btnMovePreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMovePreviousActionPerformed
+        // TODO add your handling code here:
+        this.movePrevious();
+    }//GEN-LAST:event_btnMovePreviousActionPerformed
+
+    private void btnMoveFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveFirstActionPerformed
+        // TODO add your handling code here:
+        this.moveFirst();
+    }//GEN-LAST:event_btnMoveFirstActionPerformed
+
+    private void btnMoveLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMoveLastActionPerformed
+        // TODO add your handling code here:
+        this.moveLast();
+    }//GEN-LAST:event_btnMoveLastActionPerformed
 
     /**
      * @param args the command line arguments
@@ -279,26 +410,180 @@ public class CategoryManagerJDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
+    private javax.swing.JButton btnCheckAll;
+    private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnCreate;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnDeleteCheckedItems;
+    private javax.swing.JButton btnMoveFirst;
+    private javax.swing.JButton btnMoveLast;
+    private javax.swing.JButton btnMoveNext;
+    private javax.swing.JButton btnMovePrevious;
+    private javax.swing.JButton btnUncheckAll;
+    private javax.swing.JButton btnUpdate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTabbedPane tabs;
+    private javax.swing.JTable tblCategories;
+    private javax.swing.JTextField txtId;
+    private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
+CategoryDAO dao = new CategoryDAOImpl(); 
+List<Categories> items = List.of(); 
+ 
+@Override 
+public void open() { 
+    this.setLocationRelativeTo(null); 
+    this.fillToTable(); 
+    this.clear(); 
+} 
+ 
+@Override 
+public void fillToTable() { 
+    DefaultTableModel model = (DefaultTableModel) tblCategories.getModel(); 
+    model.setRowCount(0); 
+ 
+    items = dao.findAll(); 
+    items.forEach(item -> { 
+        Object[] rowData = { 
+            item.getId(), 
+            item.getName(), 
+            false 
+        }; 
+        model.addRow(rowData); 
+    }); 
+} 
+ 
+@Override 
+public void edit() { 
+    Categories entity = items.get(tblCategories.getSelectedRow()); 
+    this.setForm(entity); 
+    this.setEditable(true); 
+    tabs.setSelectedIndex(1); 
+} 
+ 
+@Override 
+public void checkAll() { 
+    this.setCheckedAll(true); 
+} 
+ 
+@Override 
+public void uncheckAll() { 
+    this.setCheckedAll(false); 
+} 
+private void setCheckedAll(boolean checked) { 
+    for (int i = 0; i < tblCategories.getRowCount(); i++) { 
+        tblCategories.setValueAt(checked, i, 2); 
+    } 
+} 
+ 
+@Override 
+public void deleteCheckedItems() { 
+    if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) { 
+        for (int i = 0; i < tblCategories.getRowCount(); i++) { 
+            if ((Boolean) tblCategories.getValueAt(i, 2)) { 
+                dao.deleteById(items.get(i).getId()); 
+            } 
+        } 
+        this.fillToTable(); 
+    } 
+} 
+ 
+@Override 
+public void setForm(Categories entity) { 
+    txtId.setText(entity.getId()); 
+    txtName.setText(entity.getName()); 
+} 
+ 
+@Override 
+public Categories getForm() { 
+    Categories entity = new Categories(); 
+    entity.setId(txtId.getText()); 
+    entity.setName(txtName.getText()); 
+    return entity; 
+} 
+ 
+@Override 
+public void create() { 
+    Categories entity = this.getForm(); 
+    dao.create(entity); 
+    this.fillToTable(); 
+    this.clear(); 
+} 
+ 
+@Override 
+public void update() { 
+    Categories entity = this.getForm(); 
+    dao.update(entity); 
+    this.fillToTable(); 
+} 
+ 
+@Override 
+public void delete() { 
+    if (XDialog.confirm("Bạn thực sự muốn xóa?")) { 
+        String id = txtId.getText(); 
+        dao.deleteById(id); 
+        this.fillToTable(); 
+        this.clear(); 
+    } 
+} 
+ 
+@Override 
+public void clear() { 
+    this.setForm(new Categories()); 
+    this.setEditable(false); 
+//txtId.setText(null);
+//txtName.setText(null);
+} 
+ 
+@Override 
+public void setEditable(boolean editable) { 
+    txtId.setEnabled(!editable); 
+    btnCreate.setEnabled(!editable); 
+    btnUpdate.setEnabled(editable); 
+    btnDelete.setEnabled(editable); 
+ 
+    int rowCount = tblCategories.getRowCount(); 
+    btnMoveFirst.setEnabled(editable && rowCount > 0); 
+    btnMovePrevious.setEnabled(editable && rowCount > 0); 
+    btnMoveNext.setEnabled(editable && rowCount > 0); 
+    btnMoveLast.setEnabled(editable && rowCount > 0); 
+} 
+ 
+@Override 
+public void moveFirst() { 
+    this.moveTo(0); 
+} 
+ 
+@Override 
+public void movePrevious() { 
+    this.moveTo(tblCategories.getSelectedRow() - 1); 
+} 
+ 
+@Override 
+public void moveNext() { 
+    this.moveTo(tblCategories.getSelectedRow() + 1); 
+} 
+ 
+@Override 
+public void moveLast() { 
+    this.moveTo(tblCategories.getRowCount() - 1); 
+} 
+ 
+@Override 
+public void moveTo(int index) { 
+    if (index < 0) { 
+        this.moveLast(); 
+    } else if (index >= tblCategories.getRowCount()) { 
+        this.moveFirst(); 
+    } else { 
+        tblCategories.clearSelection(); 
+        tblCategories.setRowSelectionInterval(index, index); 
+        this.edit(); 
+    } 
+} 
 }

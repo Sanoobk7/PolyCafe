@@ -22,9 +22,9 @@ public class XJdbc {
      * @return Kết nối đã sẵn sàng
      */
     public static Connection openConnection() {
-        var driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
-        var dburl = "jdbc:sqlserver://WebStore.mssql.somee.com;database=WebStore;encrypt=true;trustServerCertificate=true;";
-        var username = "PolyCafe";
+        var driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver"; 
+        var dburl = "jdbc:sqlserver://localhost;database=PolyCafe;encrypt=true;trustServerCertificate=true;"; 
+        var username = "sa"; 
         var password = "123";
         try {
             if (!XJdbc.isReady()) {
