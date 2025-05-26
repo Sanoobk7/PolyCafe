@@ -535,7 +535,7 @@ public void delete() {
 @Override 
 public void clear() { 
     this.setForm(new Categories()); 
-    this.setEditable(false); 
+    this.setEditable(true); 
 //txtId.setText(null);
 //txtName.setText(null);
 } 

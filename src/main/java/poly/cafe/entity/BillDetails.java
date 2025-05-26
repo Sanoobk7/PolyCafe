@@ -9,7 +9,7 @@ package poly.cafe.entity;
  * @author Home
  */
 public class BillDetails {
-     private long id;
+    private long id;
     private long billId;
     private String drinkId;
     private double unitPrice;

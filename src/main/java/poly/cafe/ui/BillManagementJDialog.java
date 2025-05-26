@@ -3,13 +3,30 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package poly.cafe.ui;
+import poly.cafe.entity.Bills;
+import poly.cafe.dao.BillDao;
+import poly.cafe.dao.CrudDAO;
+import poly.cafe.util.XJdbc;
+import poly.cafe.ui.manager.CategoryController;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import poly.cafe.dao.BillsManagerDao;
+import poly.cafe.dao.CategoryDAO;
+import poly.cafe.dao.impl.CategoryDAOImpl;
+import poly.cafe.entity.Categories;
+import poly.cafe.util.XDialog;
+import javax.swing.JOptionPane;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import poly.cafe.dao.AccountManagementDao;
 
 /**
  *
  * @author Home
  */
 public class BillManagementJDialog extends javax.swing.JDialog {
-
+DefaultTableModel tableModel;
+//JTable table;
     /**
      * Creates new form ReceiptManagementJDialog
      */
@@ -17,7 +34,371 @@ public class BillManagementJDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
+        initTable1();
+        loaddatatotable();
     }
+     private void initTable1() {
+        // Thiết lập bảng jTable1 với các cột và kiểu dữ liệu tương ứng
+        // Mỗi cột tương ứng với một kiểu dữ liệu
+        // Xác định kiểu dữ liệu của từng cột (để hiển thị checkbox ở cột cuối)
+        // Chỉ cho phép chỉnh sửa cột cuối cùng (checkbox "Chọn")
+        //mấy cái này đều cần cái Dao.java hỗ trợ để làm cho dễ
+    tableModel = new DefaultTableModel(new String[]{"Mã phiếu", "thẻ số", "thời điểm tạo", "thời điểm thanh toán", "Trạng thái", "Người tạo", "Chọn"}, 0) {
+        Class<?>[] types = new Class<?>[]{String.class, String.class, String.class, String.class, String.class, String.class, Boolean.class};
+        @Override
+        public Class<?> getColumnClass(int columnIndex) {
+            return types[columnIndex];
+        }
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return column == 6;
+        }
+    };
+    jTable.setModel(tableModel);
+    // Gán mô hình dữ liệu cho bảng
+}
+      public void loaddatatotable() {
+    tableModel.setRowCount(0); // Clear existing rows
+    BillsManagerDao dao = new BillsManagerDao(); // Use BillsDao instead of BillsManagerDao
+    List<Bills> list = dao.findAll(); // Retrieve all bills
+    for (Bills bill : list) {
+        // Map status integer to string representation
+        String status;
+        switch (bill.getStatus()) {
+            case 0:
+                status = "Đang bảo trì";
+                break;
+            case 1:
+                status = "Hoàn thành";
+                break;
+            case 2:
+                status = "Đã hủy";
+                break;
+            default:
+                status = "Không xác định"; // Fallback for unexpected status values
+        }
+        tableModel.addRow(new Object[]{
+            bill.getId(),
+            bill.getUsername(),
+            bill.getCardId(),
+            bill.getCheckin(),
+            bill.getCheckout(),
+            status,
+            false // Assuming this is for a checkbox column (e.g., for selection)
+        });
+    }
+}
+      private void Them() {
+        BillsManagerDao dao = new BillsManagerDao();
+        AccountManagementDao userDao = new AccountManagementDao();
+        String username = txtNguoiTao.getText().trim();
+        String cardIdStr = txtTheSo.getText().trim();
+        String checkinStr = txtThoiDiemTao.getText().trim();
+        String checkoutStr = txtThoiDiemThanhToan.getText().trim();
+
+        // Validate required fields
+        if (username.isEmpty() || cardIdStr.isEmpty() || checkinStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin (Người tạo, Thẻ số, Thời điểm tạo)!");
+            return;
+        }
+
+        // Validate Username exists in Users table
+        if (!userDao.checkUsernameExists(username)) {
+            JOptionPane.showMessageDialog(this, "Người tạo (Username) không tồn tại trong cơ sở dữ liệu!");
+            return;
+        }
+
+        // Validate CardId (1-30)
+        int cardId;
+        try {
+            cardId = Integer.parseInt(cardIdStr);
+            if (cardId < 1 || cardId > 30) {
+                JOptionPane.showMessageDialog(this, "Thẻ số phải nằm trong khoảng từ 1 đến 30!");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Thẻ số phải là số nguyên hợp lệ!");
+            return;
+        }
+
+        // Parse Checkin date
+        Date checkin;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            checkin = sdf.parse(checkinStr);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Thời điểm tạo phải có định dạng dd/MM/yyyy HH:mm!");
+            return;
+        }
+
+        // Parse Checkout date (nullable)
+        Date checkout = null;
+        if (!checkoutStr.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                checkout = sdf.parse(checkoutStr);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Thời điểm thanh toán phải có định dạng dd/MM/yyyy HH:mm hoặc để trống!");
+                return;
+            }
+        }
+
+        // Determine Status
+        int status;
+        if (rdoBaoTri.isSelected()) {
+            status = 0; // Đang bảo trì
+        } else if (rdoHoanThanh.isSelected()) {
+            status = 1; // Hoàn thành
+        } else if (rdoDaHuy.isSelected()) {
+            status = 2; // Đã hủy
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái (Đang bảo trì, Hoàn thành, hoặc Đã hủy)!");
+            return;
+        }
+
+        // Create Bills object
+        Bills bill = new Bills();
+        bill.setUsername(username);
+        bill.setCardId(cardId);
+        bill.setCheckin(checkin);
+        bill.setCheckout(checkout);
+        bill.setStatus(status);
+
+        // Insert bill
+        if (dao.insert(bill)) {
+            JOptionPane.showMessageDialog(this, "Thêm phiếu thành công!");
+            loaddatatotable();
+        } else {
+            JOptionPane.showMessageDialog(this, "Thêm phiếu thất bại! Kiểm tra lại Thẻ số có tồn tại trong bảng Cards.");
+        }
+    }
+
+    private void Xoa() {
+        String maPhieuStr = txtMaPhieu.getText().trim();
+        if (maPhieuStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã phiếu!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        long maPhieu;
+        try {
+            maPhieu = Long.parseLong(maPhieuStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Mã phiếu phải là số hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc muốn xóa Phiếu với mã: " + maPhieu + "?",
+                "Xác nhận",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            BillsManagerDao dao = new BillsManagerDao();
+            boolean result = dao.deleteById(maPhieu);
+
+            if (result) {
+                JOptionPane.showMessageDialog(this, "Xóa thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                loaddatatotable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Mã phiếu không tồn tại, xóa thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void Sua() {
+        BillsManagerDao dao = new BillsManagerDao();
+        AccountManagementDao userDao = new AccountManagementDao();
+        String maPhieuStr = txtMaPhieu.getText().trim();
+        String username = txtNguoiTao.getText().trim();
+        String cardIdStr = txtTheSo.getText().trim();
+        String checkinStr = txtThoiDiemTao.getText().trim();
+        String checkoutStr = txtThoiDiemThanhToan.getText().trim();
+
+        // Validate required fields
+        if (maPhieuStr.isEmpty() || username.isEmpty() || cardIdStr.isEmpty() || checkinStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin (Mã phiếu, Người tạo, Thẻ số, Thời điểm tạo)!");
+            return;
+        }
+
+        // Parse MaPhieu
+        long maPhieu;
+        try {
+            maPhieu = Long.parseLong(maPhieuStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Mã phiếu phải là số hợp lệ!");
+            return;
+        }
+
+        // Validate Username exists
+        if (!userDao.checkUsernameExists(username)) {
+            JOptionPane.showMessageDialog(this, "Người tạo (Username) không tồn tại trong cơ sở dữ liệu!");
+            return;
+        }
+
+        // Validate CardId (1-30)
+        int cardId;
+        try {
+            cardId = Integer.parseInt(cardIdStr);
+            if (cardId < 1 || cardId > 30) {
+                JOptionPane.showMessageDialog(this, "Thẻ số phải nằm trong khoảng từ 1 đến 30!");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Thẻ số phải là số nguyên hợp lệ!");
+            return;
+        }
+
+        // Parse Checkin date
+        Date checkin;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            checkin = sdf.parse(checkinStr);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Thời điểm tạo phải có định dạng dd/MM/yyyy HH:mm!");
+            return;
+        }
+
+        // Parse Checkout date (nullable)
+        Date checkout = null;
+        if (!checkoutStr.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                checkout = sdf.parse(checkoutStr);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Thời điểm thanh toán phải có định dạng dd/MM/yyyy HH:mm hoặc để trống!");
+                return;
+            }
+        }
+
+        // Determine Status
+        int status;
+        if (rdoBaoTri.isSelected()) {
+            status = 0; // Đang bảo trì
+        } else if (rdoHoanThanh.isSelected()) {
+            status = 1; // Hoàn thành
+        } else if (rdoDaHuy.isSelected()) {
+            status = 2; // Đã hủy
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái (Đang bảo trì, Hoàn thành, hoặc Đã hủy)!");
+            return;
+        }
+
+        // Create Bills object
+        Bills bill = new Bills();
+        bill.setId(maPhieu);
+        bill.setUsername(username);
+        bill.setCardId(cardId);
+        bill.setCheckin(checkin);
+        bill.setCheckout(checkout);
+        bill.setStatus(status);
+
+        // Update bill
+        if (dao.update(bill)) {
+            JOptionPane.showMessageDialog(this, "Cập nhật phiếu thành công!");
+            loaddatatotable();
+        } else {
+            JOptionPane.showMessageDialog(this, "Cập nhật phiếu thất bại! Kiểm tra lại Mã phiếu và Thẻ số.");
+        }
+    }
+     private void updateFormFromRow(int row) {
+        if (row >= 0 && row < jTable.getRowCount()) {
+            txtMaPhieu.setText(String.valueOf(jTable.getValueAt(row, 0))); // Id
+            txtNguoiTao.setText((String) jTable.getValueAt(row, 1)); // Username
+            txtTheSo.setText(String.valueOf(jTable.getValueAt(row, 2))); // CardId
+
+            // Format Checkin and Checkout
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Object checkin = jTable.getValueAt(row, 3); // Checkin
+            txtThoiDiemTao.setText(checkin != null ? sdf.format((Date) checkin) : "");
+            Object checkout = jTable.getValueAt(row, 4); // Checkout
+            txtThoiDiemThanhToan.setText(checkout != null && !"N/A".equals(checkout) ? sdf.format((Date) checkout) : "");
+
+            // Set Status radio buttons
+            String status = (String) jTable.getValueAt(row, 5); // Status
+            rdoBaoTri.setSelected("Đang bảo trì".equals(status));
+            rdoHoanThanh.setSelected("Hoàn thành".equals(status));
+            rdoDaHuy.setSelected("Đã hủy".equals(status));
+        }
+    }
+
+    public void firstRow() {
+        if (jTable.getRowCount() > 0) {
+            jTable.setRowSelectionInterval(0, 0);
+            jTable.scrollRectToVisible(jTable.getCellRect(0, 0, true));
+            updateFormFromRow(0);
+        }
+    }
+
+    public void lastRow() {
+        int lastIndex = jTable.getRowCount() - 1;
+        if (lastIndex >= 0) {
+            jTable.setRowSelectionInterval(lastIndex, lastIndex);
+            jTable.scrollRectToVisible(jTable.getCellRect(lastIndex, 0, true));
+            updateFormFromRow(lastIndex);
+        }
+    }
+
+    public void nextRow() {
+        int current = jTable.getSelectedRow();
+        int next = current + 1;
+        if (next < jTable.getRowCount()) {
+            jTable.setRowSelectionInterval(next, next);
+            jTable.scrollRectToVisible(jTable.getCellRect(next, 0, true));
+            updateFormFromRow(next);
+        }
+    }
+
+    public void backRow() {
+        int current = jTable.getSelectedRow();
+        int back = current - 1;
+        if (back >= 0) {
+            jTable.setRowSelectionInterval(back, back);
+            jTable.scrollRectToVisible(jTable.getCellRect(back, 0, true));
+            updateFormFromRow(back);
+        }
+    }
+
+    public void BoChonTatCa() {
+        for (int row = 0; row < jTable.getRowCount(); row++) {
+            jTable.setValueAt(false, row, 6); // Checkbox column
+        }
+    }
+
+    public void ChonTatCa() {
+        for (int row = 0; row < jTable.getRowCount(); row++) {
+            jTable.setValueAt(true, row, 6); // Checkbox column
+        }
+    }
+
+    public void xoaCacDongDaChon() {
+        BillsManagerDao dao = new BillsManagerDao();
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+
+        for (int i = 0; i < jTable.getRowCount(); i++) {
+            Boolean checked = (Boolean) jTable.getValueAt(i, 6); // Checkbox column
+            if (checked != null && checked) {
+                long id = Long.parseLong(jTable.getValueAt(i, 0).toString()); // Id column
+                if (dao.deleteById(id)) {
+                    sb.append("- ID: ").append(id).append("\n");
+                    count++;
+                }
+            }
+        }
+
+        if (count > 0) {
+            JOptionPane.showMessageDialog(this,
+                "Đã xóa thành công " + count + " phiếu:\n" + sb.toString(),
+                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            loaddatatotable(); // Refresh table
+        } else {
+            JOptionPane.showMessageDialog(this,
+                "Không có dòng nào được chọn để xóa.",
+                "Thông báo", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -33,10 +414,10 @@ public class BillManagementJDialog extends javax.swing.JDialog {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        jTable = new javax.swing.JTable();
+        BtnChonTatCa = new javax.swing.JButton();
+        BtnBoChonTatCa = new javax.swing.JButton();
+        BtnXoaTatCaDaChon = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
@@ -45,35 +426,35 @@ public class BillManagementJDialog extends javax.swing.JDialog {
         jComboBox1 = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jButton5 = new javax.swing.JButton();
-        jButton12 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
+        BtnThem = new javax.swing.JButton();
+        BtnCapNhap = new javax.swing.JButton();
+        BtnXoa = new javax.swing.JButton();
+        BtnLamMoi = new javax.swing.JButton();
+        BtnBack = new javax.swing.JButton();
+        BtnFirst = new javax.swing.JButton();
+        BtnNext = new javax.swing.JButton();
+        BtnLast = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtMaPhieu = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtTheSo = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        txtThoiDiemTao = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        txtThoiDiemThanhToan = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
+        txtNguoiTao = new javax.swing.JTextField();
+        rdoBaoTri = new javax.swing.JRadioButton();
+        rdoHoanThanh = new javax.swing.JRadioButton();
+        rdoDaHuy = new javax.swing.JRadioButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Quản lý phiếu");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
@@ -92,21 +473,31 @@ public class BillManagementJDialog extends javax.swing.JDialog {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(jTable);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/accept.png"))); // NOI18N
-        jButton1.setText("Chọn tất cả");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        BtnChonTatCa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/accept.png"))); // NOI18N
+        BtnChonTatCa.setText("Chọn tất cả");
+        BtnChonTatCa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                BtnChonTatCaActionPerformed(evt);
             }
         });
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete.png"))); // NOI18N
-        jButton3.setText("bỏ chọn tất cả");
+        BtnBoChonTatCa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete.png"))); // NOI18N
+        BtnBoChonTatCa.setText("bỏ chọn tất cả");
+        BtnBoChonTatCa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnBoChonTatCaActionPerformed(evt);
+            }
+        });
 
-        jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/trash.png"))); // NOI18N
-        jButton4.setText("xóa các mục chọn");
+        BtnXoaTatCaDaChon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/trash.png"))); // NOI18N
+        BtnXoaTatCaDaChon.setText("xóa các mục chọn");
+        BtnXoaTatCaDaChon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnXoaTatCaDaChonActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Từ ngày: ");
 
@@ -123,11 +514,11 @@ public class BillManagementJDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(219, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addComponent(BtnChonTatCa)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
+                .addComponent(BtnBoChonTatCa)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton4)
+                .addComponent(BtnXoaTatCaDaChon)
                 .addGap(12, 12, 12))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(123, 123, 123)
@@ -169,9 +560,9 @@ public class BillManagementJDialog extends javax.swing.JDialog {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 232, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton1)
-                    .addComponent(jButton4))
+                    .addComponent(BtnBoChonTatCa)
+                    .addComponent(BtnChonTatCa)
+                    .addComponent(BtnXoaTatCaDaChon))
                 .addContainerGap())
         );
 
@@ -179,25 +570,65 @@ public class BillManagementJDialog extends javax.swing.JDialog {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add.png"))); // NOI18N
-        jButton5.setText("Tạo mới");
+        BtnThem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add.png"))); // NOI18N
+        BtnThem.setText("Tạo mới");
+        BtnThem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnThemActionPerformed(evt);
+            }
+        });
 
-        jButton12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/edit.png"))); // NOI18N
-        jButton12.setText("Cập nhập");
+        BtnCapNhap.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/edit.png"))); // NOI18N
+        BtnCapNhap.setText("Cập nhập");
+        BtnCapNhap.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnCapNhapActionPerformed(evt);
+            }
+        });
 
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/trash.png"))); // NOI18N
-        jButton6.setText("Xóa");
+        BtnXoa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/trash.png"))); // NOI18N
+        BtnXoa.setText("Xóa");
+        BtnXoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnXoaActionPerformed(evt);
+            }
+        });
 
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
-        jButton7.setText("Làm mới");
+        BtnLamMoi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/refresh.png"))); // NOI18N
+        BtnLamMoi.setText("Làm mới");
+        BtnLamMoi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnLamMoiActionPerformed(evt);
+            }
+        });
 
-        jButton9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/back.png"))); // NOI18N
+        BtnBack.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/back.png"))); // NOI18N
+        BtnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnBackActionPerformed(evt);
+            }
+        });
 
-        jButton10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Fisrt.png"))); // NOI18N
+        BtnFirst.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Fisrt.png"))); // NOI18N
+        BtnFirst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnFirstActionPerformed(evt);
+            }
+        });
 
-        jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/next.png"))); // NOI18N
+        BtnNext.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/next.png"))); // NOI18N
+        BtnNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnNextActionPerformed(evt);
+            }
+        });
 
-        jButton11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/last.png"))); // NOI18N
+        BtnLast.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/last.png"))); // NOI18N
+        BtnLast.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnLastActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -207,24 +638,24 @@ public class BillManagementJDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
+                        .addComponent(BtnThem, javax.swing.GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(BtnCapNhap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(146, 146, 146))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(BtnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(BtnLamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(6, 6, 6)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(BtnBack, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(BtnNext, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(BtnFirst, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(BtnLast, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(29, 29, 29))
         );
         jPanel3Layout.setVerticalGroup(
@@ -233,23 +664,23 @@ public class BillManagementJDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton5)
-                        .addComponent(jButton12))
-                    .addComponent(jButton9)
-                    .addComponent(jButton8))
+                        .addComponent(BtnThem)
+                        .addComponent(BtnCapNhap))
+                    .addComponent(BtnBack)
+                    .addComponent(BtnNext))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jButton6)
-                        .addComponent(jButton7))
-                    .addComponent(jButton10)
-                    .addComponent(jButton11))
+                        .addComponent(BtnXoa)
+                        .addComponent(BtnLamMoi))
+                    .addComponent(BtnFirst)
+                    .addComponent(BtnLast))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel3.setText("Mã phiếu");
 
-        jTextField3.setEditable(false);
+        txtMaPhieu.setEditable(false);
 
         jLabel4.setText("Thẻ số");
 
@@ -261,14 +692,14 @@ public class BillManagementJDialog extends javax.swing.JDialog {
 
         jLabel8.setText("Người tạo");
 
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setText("đang bảo trì");
+        buttonGroup1.add(rdoBaoTri);
+        rdoBaoTri.setText("đang bảo trì");
 
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("hoàn thành");
+        buttonGroup1.add(rdoHoanThanh);
+        rdoHoanThanh.setText("hoàn thành");
 
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("đã hủy");
+        buttonGroup1.add(rdoDaHuy);
+        rdoDaHuy.setText("đã hủy");
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -295,25 +726,25 @@ public class BillManagementJDialog extends javax.swing.JDialog {
                 .addGap(20, 20, 20)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jTextField5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
+                        .addComponent(txtThoiDiemTao, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)
                         .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addComponent(txtMaPhieu, javax.swing.GroupLayout.Alignment.LEADING))
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jRadioButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(rdoBaoTri, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(rdoHoanThanh, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jRadioButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(rdoDaHuy, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4)
+                    .addComponent(txtTheSo)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField6)
+                    .addComponent(txtThoiDiemThanhToan)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE))
+                    .addComponent(txtNguoiTao, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE))
                 .addGap(55, 55, 55))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
@@ -329,26 +760,26 @@ public class BillManagementJDialog extends javax.swing.JDialog {
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtMaPhieu, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTheSo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jLabel6))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtThoiDiemTao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtThoiDiemThanhToan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRadioButton1)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton3))
+                    .addComponent(txtNguoiTao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rdoBaoTri)
+                    .addComponent(rdoHoanThanh)
+                    .addComponent(rdoDaHuy))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -372,9 +803,55 @@ public class BillManagementJDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void BtnChonTatCaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnChonTatCaActionPerformed
+        ChonTatCa();
+    }//GEN-LAST:event_BtnChonTatCaActionPerformed
+
+    private void BtnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnThemActionPerformed
+        Them();
+    }//GEN-LAST:event_BtnThemActionPerformed
+
+    private void BtnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnXoaActionPerformed
+        Xoa();
+    }//GEN-LAST:event_BtnXoaActionPerformed
+
+    private void BtnCapNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCapNhapActionPerformed
+        Sua();
+    }//GEN-LAST:event_BtnCapNhapActionPerformed
+
+    private void BtnLamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLamMoiActionPerformed
+        buttonGroup1.clearSelection();
+        buttonGroup2.clearSelection();
+        txtMaPhieu.setText(null);
+        txtNguoiTao.setText(null);
+        txtTheSo.setText(null);
+        txtThoiDiemTao.setText(null);
+        txtThoiDiemThanhToan.setText(null);
+    }//GEN-LAST:event_BtnLamMoiActionPerformed
+
+    private void BtnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBackActionPerformed
+       backRow();
+    }//GEN-LAST:event_BtnBackActionPerformed
+
+    private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
+        nextRow();
+    }//GEN-LAST:event_BtnNextActionPerformed
+
+    private void BtnFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnFirstActionPerformed
+        firstRow();
+    }//GEN-LAST:event_BtnFirstActionPerformed
+
+    private void BtnLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLastActionPerformed
+        lastRow();
+    }//GEN-LAST:event_BtnLastActionPerformed
+
+    private void BtnBoChonTatCaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBoChonTatCaActionPerformed
+        BoChonTatCa();
+    }//GEN-LAST:event_BtnBoChonTatCaActionPerformed
+
+    private void BtnXoaTatCaDaChonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnXoaTatCaDaChonActionPerformed
+       xoaCacDongDaChon();
+    }//GEN-LAST:event_BtnXoaTatCaDaChonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -420,20 +897,20 @@ public class BillManagementJDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnBack;
+    private javax.swing.JButton BtnBoChonTatCa;
+    private javax.swing.JButton BtnCapNhap;
+    private javax.swing.JButton BtnChonTatCa;
+    private javax.swing.JButton BtnFirst;
+    private javax.swing.JButton BtnLamMoi;
+    private javax.swing.JButton BtnLast;
+    private javax.swing.JButton BtnNext;
+    private javax.swing.JButton BtnThem;
+    private javax.swing.JButton BtnXoa;
+    private javax.swing.JButton BtnXoaTatCaDaChon;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -446,20 +923,20 @@ public class BillManagementJDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField8;
+    private javax.swing.JRadioButton rdoBaoTri;
+    private javax.swing.JRadioButton rdoDaHuy;
+    private javax.swing.JRadioButton rdoHoanThanh;
+    private javax.swing.JTextField txtMaPhieu;
+    private javax.swing.JTextField txtNguoiTao;
+    private javax.swing.JTextField txtTheSo;
+    private javax.swing.JTextField txtThoiDiemTao;
+    private javax.swing.JTextField txtThoiDiemThanhToan;
     // End of variables declaration//GEN-END:variables
 }
