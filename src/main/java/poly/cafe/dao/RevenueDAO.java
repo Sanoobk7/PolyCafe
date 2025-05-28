@@ -4,12 +4,15 @@
  */
 package poly.cafe.dao;
 
+import java.util.Date;
 import java.util.List;
+import poly.cafe.entity.Revenue;
 
-public interface CrudDAO<T, ID> {
-    T create(T entity);
-    void update(T entity);
-    void deleteById(ID id);
-    List<T> findAll();
-    T findById(ID id);
+/**
+ *
+ * @author PC
+ */
+public interface RevenueDAO {
+    List<Revenue.ByCategory> getByCategory(Date begin, Date end);
+    List<Revenue.ByUser> getByUser(Date begin, Date end);
 }

@@ -4,15 +4,28 @@
  */
 package poly.cafe.ui;
 
+import java.util.List;
+import java.util.Locale.Category;
+import javax.swing.table.DefaultTableModel;
+import poly.cafe.dao.CategoryDAO;
+import poly.cafe.dao.DrinkDAO;
+import poly.cafe.dao.impl.CategoryDAOImpl;
+import poly.cafe.dao.impl.DrinkDAOImpl;
+import poly.cafe.entity.Drinks;
+import poly.cafe.entity.Categories;
+
 /**
  *
  * @author Home
  */
-public class DrinkManagementJDialog extends javax.swing.JDialog {
+public class DrinkManagementJDialog extends javax.swing.JDialog{
 
     /**
      * Creates new form BeverageManagementJDialog
      */
+    
+   
+    
     public DrinkManagementJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -33,7 +46,7 @@ public class DrinkManagementJDialog extends javax.swing.JDialog {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblDrinks = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
@@ -58,7 +71,7 @@ public class DrinkManagementJDialog extends javax.swing.JDialog {
         jLabel7 = new javax.swing.JLabel();
         jRadioButton1 = new javax.swing.JRadioButton();
         jRadioButton2 = new javax.swing.JRadioButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cboCategories = new javax.swing.JComboBox<>();
         jTextField1 = new javax.swing.JTextField();
         jSlider1 = new javax.swing.JSlider();
         jTextField2 = new javax.swing.JTextField();
@@ -71,7 +84,7 @@ public class DrinkManagementJDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Quản lý đồ uống");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblDrinks.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null},
                 {null},
@@ -90,7 +103,7 @@ public class DrinkManagementJDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tblDrinks);
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -253,7 +266,7 @@ public class DrinkManagementJDialog extends javax.swing.JDialog {
         buttonGroup1.add(jRadioButton2);
         jRadioButton2.setText("Hết hàng");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nước trái cây", "Item 2", "Item 3", "Item 4" }));
+        cboCategories.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nước trái cây", "Item 2", "Item 3", "Item 4" }));
 
         jLabel8.setText("0%");
 
@@ -268,7 +281,7 @@ public class DrinkManagementJDialog extends javax.swing.JDialog {
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox1, 0, 192, Short.MAX_VALUE)
+                    .addComponent(cboCategories, 0, 192, Short.MAX_VALUE)
                     .addComponent(jTextField1)
                     .addComponent(jTextField3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
@@ -336,7 +349,7 @@ public class DrinkManagementJDialog extends javax.swing.JDialog {
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jRadioButton1)
                             .addComponent(jRadioButton2)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(cboCategories, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -407,6 +420,7 @@ public class DrinkManagementJDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JComboBox<String> cboCategories;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton11;
@@ -419,7 +433,6 @@ public class DrinkManagementJDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -437,10 +450,62 @@ public class DrinkManagementJDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSlider jSlider1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTable tblDrinks;
     // End of variables declaration//GEN-END:variables
+CategoryDAO categoryDao = new CategoryDAOImpl();
+    List<Category> categories = List.of();
+    DrinkDAO drinkDao = new DrinkDAOImpl();
+    List<Drinks> drinks = List.of();
+
+    public void open() {
+        this.setLocationRelativeTo(null);
+//        this.fillCategories();
+//        this.fillDrinks();
+    }
+
+//    @Override
+//    public void fillCategories() {
+//        categories = categoryDao.findAll();
+//        DefaultTableModel model = (DefaultTableModel) tblCategories.getModel();
+//        model.setRowCount(0);
+//        categories.forEach(d -> model.addRow(new Object[]{d.getName()}));
+//        tblCategories.setRowSelectionInterval(0, 0);
+//    }
+
+//    @Override
+//    public void fillDrinks() {
+//        Category category = categories.get(tblCategories.getSelectedRow());
+//        drinks = drinkDao.findByCategoryId(category.getId());
+//        DefaultTableModel model = (DefaultTableModel) tblDrinks.getModel();
+//        model.setRowCount(0);
+//        drinks.forEach(d -> {
+//            Object[] row = {
+//                d.getId(),
+//                d.getName(),
+//                String.format("$%.1f", d.getUnitPrice()),
+//                String.format("%.0f%%", d.getDiscount() * 100)
+//            };
+//            model.addRow(row);
+//        });
+//    }
+
+//    @Override
+//    public void addDrinkToBill() {
+//        String quantity = XDialog.prompt("Số lượng?");
+//        if (quantity != null && quantity.length() > 0) {
+//            Drink drink = drinks.get(tblDrinks.getSelectedRow());
+//            BillDetail detail = new BillDetail();
+//            detail.setBillId(bill.getId());
+//            detail.setDiscount(drink.getDiscount());
+//            detail.setDrinkId(drink.getId());
+//            detail.setQuantity(Integer.parseInt(quantity));
+//            detail.setUnitPrice(drink.getUnitPrice());
+//            new BillDetailDAOImpl().create(detail);
+//        }
+//    }
+
 }

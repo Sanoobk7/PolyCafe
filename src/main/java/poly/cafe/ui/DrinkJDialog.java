@@ -134,3 +134,4 @@ public class DrinkJDialog extends javax.swing.JDialog {
     private javax.swing.JTable jTable2;
     // End of variables declaration//GEN-END:variables
 }
+

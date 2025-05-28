@@ -5,11 +5,21 @@
  */
 package poly.cafe.ui;
 
+import java.util.Date;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import poly.cafe.dao.RevenueDAO;
+import poly.cafe.dao.impl.RevenueDAOImpl;
+import poly.cafe.entity.Revenue;
+import poly.cafe.ui.manager.RevenueController;
+import poly.cafe.util.TimeRange;
+import poly.cafe.util.XDate;
+
 /**
  *
  * @author Admin
  */
-public class RevenueStatisticsJDialog extends javax.swing.JDialog {
+public class RevenueStatisticsJDialog extends javax.swing.JDialog implements RevenueController {
 
     /**
      * Creates new form RevenueStatisticsJDialog
@@ -32,18 +42,18 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtBegin = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        txtEnd = new javax.swing.JTextField();
+        btnFilter = new javax.swing.JButton();
+        cboTimeRanges = new javax.swing.JComboBox<>();
+        tabs = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tblByCategory = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblByUser = new javax.swing.JTable();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -51,25 +61,41 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Báo cáo thống kê");
-
-        jLabel1.setText("Từ ngày:");
-
-        jTextField1.setText("01/01/2025");
-
-        jLabel2.setText("Đến ngày:");
-
-        jTextField2.setText("01/01/2026");
-
-        jButton1.setText("Lọc");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Năm nay" }));
+        jLabel1.setText("Từ ngày:");
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        txtBegin.setText("01/01/2025");
+
+        jLabel2.setText("Đến ngày:");
+
+        txtEnd.setText("01/01/2026");
+
+        btnFilter.setText("Lọc");
+        btnFilter.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFilterActionPerformed(evt);
+            }
+        });
+
+        cboTimeRanges.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Năm nay" }));
+        cboTimeRanges.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboTimeRangesActionPerformed(evt);
+            }
+        });
+
+        tabs.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                tabsStateChanged(evt);
+            }
+        });
+
+        tblByCategory.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -80,7 +106,7 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
                 "Loại", "Doanh thu", "Số lượng", "Giá thấp nhất", "Giá cao nhất", "Giá trung bình"
             }
         ));
-        jScrollPane3.setViewportView(jTable2);
+        jScrollPane3.setViewportView(tblByCategory);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -98,9 +124,9 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
                 .addGap(0, 38, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Doanh thu từng loại", jPanel1);
+        tabs.addTab("Doanh thu từng loại", jPanel1);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblByUser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -111,7 +137,7 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
                 "Nhân viên", "Doanh thu", "Số bill", "Bill đầu tiên", "Bill cuối cùng"
             }
         ));
-        jScrollPane2.setViewportView(jTable1);
+        jScrollPane2.setViewportView(tblByUser);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -129,7 +155,7 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Doanh thu từng thành viên", jPanel2);
+        tabs.addTab("Doanh thu từng thành viên", jPanel2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -139,19 +165,19 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
                 .addGap(74, 74, 74)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addComponent(btnFilter)
                 .addGap(18, 18, 18)
-                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1)
+                .addComponent(tabs)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -160,22 +186,38 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
                 .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtBegin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtEnd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnFilter)
+                    .addComponent(cboTimeRanges, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jTabbedPane1)
+                .addComponent(tabs)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFilterActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        this.fillRevenue();
+    }//GEN-LAST:event_btnFilterActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        this.open();
+    }//GEN-LAST:event_formWindowOpened
+
+    private void tabsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabsStateChanged
+        // TODO add your handling code here:
+        this.fillRevenue();
+    }//GEN-LAST:event_tabsStateChanged
+
+    private void cboTimeRangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTimeRangesActionPerformed
+        // TODO add your handling code here:
+        this.selectTimeRange();
+    }//GEN-LAST:event_cboTimeRangesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -219,9 +261,82 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
         });
     }
 
+    RevenueDAO dao = new RevenueDAOImpl();
+
+    @Override
+    public void open() {
+        this.setLocationRelativeTo(null);
+        this.selectTimeRange();
+    }
+
+    @Override
+    public void selectTimeRange() {
+        TimeRange range = TimeRange.today();
+        switch (cboTimeRanges.getSelectedIndex()) {
+            case 0 ->
+                range = TimeRange.today();
+            case 1 ->
+                range = TimeRange.thisWeek();
+            case 2 ->
+                range = TimeRange.thisMonth();
+            case 3 ->
+                range = TimeRange.thisQuarter();
+            case 4 ->
+                range = TimeRange.thisYear();
+        }
+        txtBegin.setText(XDate.format(java.sql.Date.valueOf(range.getBegin()), "MM/dd/yyyy"));
+        txtEnd.setText(XDate.format(java.sql.Date.valueOf(range.getEnd()), "MM/dd/yyyy"));
+        this.fillRevenue();
+    }
+
+    @Override
+    public void fillRevenue() {
+        Date begin = XDate.parse(txtBegin.getText(), "MM/dd/yyyy");
+        Date end = XDate.parse(txtEnd.getText(), "MM/dd/yyyy");
+        switch (tabs.getSelectedIndex()) {
+            case 0 ->
+                this.fillRevenueByCategory(begin, end);
+            case 1 ->
+                this.fillRevenueByUser(begin, end);
+        }
+    }
+
+    private void fillRevenueByCategory(Date begin, Date end) {
+        List<Revenue.ByCategory> items = dao.getByCategory(begin, end);
+        DefaultTableModel model = (DefaultTableModel) tblByCategory.getModel();
+        model.setRowCount(0);
+        items.forEach(item -> {
+            Object[] row = {
+                item.getCategory(),
+                String.format("$%.2f", item.getRevenue()),
+                item.getQuantity(),
+                String.format("$%.2f", item.getMinPrice()),
+                String.format("$%.2f", item.getMaxPrice()),
+                String.format("$%.2f", item.getAvgPrice())
+            };
+            model.addRow(row);
+        });
+    }
+
+    private void fillRevenueByUser(Date begin, Date end) {
+        List<Revenue.ByUser> items = dao.getByUser(begin, end);
+        DefaultTableModel model = (DefaultTableModel) tblByUser.getModel();
+        model.setRowCount(0);
+        items.forEach(item -> {
+            Object[] row = {
+                item.getUser(),
+                String.format("$%.2f", item.getRevenue()),
+                item.getQuantity(),
+                XDate.format(item.getFirstTime(), "hh:mm:ss dd-MM-yyyy"),
+                XDate.format(item.getLastTime(), "hh:mm:ss dd-MM-yyyy")
+            };
+            model.addRow(row);
+        });
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JButton btnFilter;
+    private javax.swing.JComboBox<String> cboTimeRanges;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
@@ -229,11 +344,11 @@ public class RevenueStatisticsJDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JTabbedPane tabs;
+    private javax.swing.JTable tblByCategory;
+    private javax.swing.JTable tblByUser;
+    private javax.swing.JTextField txtBegin;
+    private javax.swing.JTextField txtEnd;
     // End of variables declaration//GEN-END:variables
 }

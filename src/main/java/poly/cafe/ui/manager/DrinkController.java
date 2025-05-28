@@ -4,13 +4,15 @@
  */
 package poly.cafe.ui.manager;
 
-import poly.cafe.entity.Categories;
-
-
+import poly.cafe.entity.Drinks;
 
 /**
  *
  * @author PC
  */
-public interface CategoryController extends CrudController<Categories>{ 
-} 
+public interface DrinkController extends CrudController<Drinks> {
+
+    void fillCategories();
+
+    void chooseFile();
+}

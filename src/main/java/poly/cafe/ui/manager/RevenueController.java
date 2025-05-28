@@ -4,13 +4,12 @@
  */
 package poly.cafe.ui.manager;
 
-import poly.cafe.entity.Categories;
-
-
-
 /**
  *
  * @author PC
  */
-public interface CategoryController extends CrudController<Categories>{ 
-} 
+public interface RevenueController {
+    void open();
+    void selectTimeRange();
+    void fillRevenue();
+}

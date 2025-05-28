@@ -483,15 +483,26 @@ private void setCheckedAll(boolean checked) {
  
 @Override 
 public void deleteCheckedItems() { 
-    if (XDialog.confirm("Bạn thực sự muốn xóa các mục chọn?")) { 
-        for (int i = 0; i < tblCategories.getRowCount(); i++) { 
-            if ((Boolean) tblCategories.getValueAt(i, 2)) { 
-                dao.deleteById(items.get(i).getId()); 
+    if (XDialog.confirm("Bạn thực sự muốn xóa các mục đã chọn?")) { 
+        try {
+            int count = 0;
+            for (int i = 0; i < tblCategories.getRowCount(); i++) { 
+                if ((Boolean) tblCategories.getValueAt(i, 2)) { 
+                    dao.deleteById(items.get(i).getId()); 
+                    count++;
+                } 
             } 
-        } 
-        this.fillToTable(); 
-    } 
-} 
+            this.fillToTable(); 
+            if (count > 0) {
+    XDialog.alert("Đã xoá " + count + " danh mục được chọn!", "Thành công");
+} else {
+    XDialog.alert("Không có danh mục nào được chọn để xoá!", "Thông báo");
+}
+        } catch (Exception e) {
+            XDialog.alert("Lỗi xoá mục chọn: " + e.getMessage(), "Lỗi");
+        }
+    }
+}
  
 @Override 
 public void setForm(Categories entity) { 
@@ -509,49 +520,112 @@ public Categories getForm() {
  
 @Override 
 public void create() { 
-    Categories entity = this.getForm(); 
-    dao.create(entity); 
-    this.fillToTable(); 
-    this.clear(); 
-} 
+    Categories entity = this.getForm(); // Lấy dữ liệu từ form nhập (ID, Name)
+
+    // Kiểm tra nếu mã ID bị để trống
+    if (entity.getId().trim().isEmpty()) {
+        XDialog.alert("Mã danh mục không được để trống!", "Cảnh báo");
+        return; // Dừng không cho tạo
+    }
+
+    // Kiểm tra nếu tên danh mục bị để trống
+    if (entity.getName().trim().isEmpty()) {
+        XDialog.alert("Tên danh mục không được để trống!", "Cảnh báo");
+        return;
+    }
+
+    // Kiểm tra trùng mã ID trong danh sách đã có
+    boolean isDuplicate = items.stream()
+        .anyMatch(c -> c.getId().equalsIgnoreCase(entity.getId()));
+    if (isDuplicate) {
+        XDialog.alert("Mã danh mục đã tồn tại. Vui lòng nhập mã khác!", "Lỗi trùng mã");
+        return;
+    }
+
+    // Nếu hợp lệ, hỏi xác nhận người dùng trước khi tạo
+    if (XDialog.confirm("Bạn có chắc muốn thêm mới danh mục này?")) {
+        try {
+            dao.create(entity); // Thêm vào database
+            this.fillToTable(); // Load lại bảng
+            this.clear(); // Xoá trắng form
+            XDialog.alert("Thêm danh mục mới thành công!", "Thành công");
+        } catch (Exception e) {
+            // Nếu lỗi xảy ra khi tạo
+            XDialog.alert("Lỗi khi thêm danh mục: " + e.getMessage(), "Lỗi");
+        }
+    }
+}
  
 @Override 
 public void update() { 
-    Categories entity = this.getForm(); 
-    dao.update(entity); 
-    this.fillToTable(); 
-} 
+    Categories entity = this.getForm(); // Lấy dữ liệu từ form
+
+    // 1. Kiểm tra mã danh mục có bị trống không
+    if (entity.getId().trim().isEmpty()) {
+        XDialog.alert("Mã danh mục không được để trống!", "Cảnh báo");
+        return;
+    }
+
+    // 2. Không kiểm tra trống tên nữa
+
+    // 3. Xác nhận người dùng trước khi cập nhật
+    if (XDialog.confirm("Bạn có chắc muốn cập nhật danh mục này?")) {
+        try {
+            dao.update(entity); // Cập nhật vào CSDL
+            this.fillToTable(); // Load lại dữ liệu vào bảng
+            XDialog.alert("Cập nhật danh mục thành công!", "Thành công");
+        } catch (Exception e) {
+            XDialog.alert("Lỗi khi cập nhật danh mục: " + e.getMessage(), "Lỗi");
+        }
+    }
+}
  
 @Override 
 public void delete() { 
-    if (XDialog.confirm("Bạn thực sự muốn xóa?")) { 
-        String id = txtId.getText(); 
-        dao.deleteById(id); 
-        this.fillToTable(); 
-        this.clear(); 
-    } 
-} 
+    String id = txtId.getText().trim(); // Lấy mã từ form
+
+    // Kiểm tra nếu chưa chọn danh mục (ID rỗng)
+    if (id.isEmpty()) {
+        XDialog.alert("Vui lòng chọn danh mục cần xoá!", "Cảnh báo");
+        return;
+    }
+
+    // Hỏi xác nhận trước khi xoá
+    if (XDialog.confirm("Bạn có chắc muốn xoá danh mục có mã: " + id + "?")) {
+        try {
+            dao.deleteById(id); // Xoá trong CSDL
+            this.fillToTable(); // Load lại bảng
+            this.clear(); // Xoá trắng form
+            XDialog.alert("Xoá danh mục thành công!", "Thành công");
+        } catch (Exception e) {
+            XDialog.alert("Lỗi khi xoá danh mục: " + e.getMessage(), "Lỗi");
+        }
+    }
+}
  
 @Override 
-public void clear() { 
+public void clear() {
+    if (!txtId.getText().isEmpty() || !txtName.getText().isEmpty()) {
+    if (!XDialog.confirm("Bạn có chắc muốn xoá trắng biểu mẫu đang nhập?")) {
+        return;
+    }
+}
     this.setForm(new Categories()); 
-    this.setEditable(true); 
-//txtId.setText(null);
-//txtName.setText(null);
-} 
+    this.setEditable(false); 
+}
  
 @Override 
 public void setEditable(boolean editable) { 
     txtId.setEnabled(!editable); 
     btnCreate.setEnabled(!editable); 
-    btnUpdate.setEnabled(editable); 
-    btnDelete.setEnabled(editable); 
+    btnUpdate.setEnabled(!editable); 
+    btnDelete.setEnabled(!editable); 
  
     int rowCount = tblCategories.getRowCount(); 
-    btnMoveFirst.setEnabled(editable && rowCount > 0); 
-    btnMovePrevious.setEnabled(editable && rowCount > 0); 
-    btnMoveNext.setEnabled(editable && rowCount > 0); 
-    btnMoveLast.setEnabled(editable && rowCount > 0); 
+    btnMoveFirst.setEnabled(rowCount > 0); 
+    btnMovePrevious.setEnabled(rowCount > 0); 
+    btnMoveNext.setEnabled(rowCount > 0); 
+    btnMoveLast.setEnabled(rowCount > 0); 
 } 
  
 @Override 
