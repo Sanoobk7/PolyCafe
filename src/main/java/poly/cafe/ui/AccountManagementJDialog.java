@@ -110,7 +110,10 @@ if (photoPath == null || photoPath.isEmpty()) {
     JOptionPane.showMessageDialog(this, "Vui lòng chọn ảnh đại diện!");
     return;
 }
-
+if (photoPath.length() > 50) {
+            JOptionPane.showMessageDialog(this, "Tên file hình ảnh không được vượt quá 50 ký tự!");
+            return;
+        }
    
 
 

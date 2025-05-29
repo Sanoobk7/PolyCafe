@@ -93,7 +93,11 @@ public class LoginJDialog extends javax.swing.JDialog {
 
         jLabel3.setText("Tên đăng nhập");
 
+        txttendn.setText("QuanLy69");
+
         jLabel4.setText("Mật khẩu");
+
+        txtpass.setText("123");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
