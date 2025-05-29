@@ -99,6 +99,7 @@ public class BillsManagerDao {
     // Find all bills
     public List<Bills> findAll() {
         String sql = "SELECT * FROM Bills";
+        
         try (Connection con = DataConnection.open();
              PreparedStatement pre = con.prepareStatement(sql)) {
             List<Bills> list = new ArrayList<>();
@@ -161,4 +162,118 @@ public class BillsManagerDao {
         }
         return false;
     }
+     public boolean checkCardIdExists(int cardId) {
+        String sql = "SELECT COUNT(*) FROM Cards WHERE Id = ?";
+        try (Connection con = DataConnection.open();
+             PreparedStatement pre = con.prepareStatement(sql)) {
+            pre.setInt(1, cardId);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+     public List<Bills> findByTimeFrame(String option) {
+    String sql = "SELECT * FROM Bills WHERE ";
+    switch (option) {
+        case "Hôm nay":
+            sql += "CAST(Checkin AS DATE) = CAST(GETDATE() AS DATE)";
+            break;
+        case "Tuần này":
+            sql += "DATEPART(WEEK, Checkin) = DATEPART(WEEK, GETDATE()) AND YEAR(Checkin) = YEAR(GETDATE())";
+            break;
+        case "Tháng này":
+            sql += "MONTH(Checkin) = MONTH(GETDATE()) AND YEAR(Checkin) = YEAR(GETDATE())";
+            break;
+        case "Năm nay":
+            sql += "YEAR(Checkin) = YEAR(GETDATE())";
+            break;
+        default:
+            return new ArrayList<>();
+    }
+
+    try (Connection con = DataConnection.open(); PreparedStatement pre = con.prepareStatement(sql)) {
+        List<Bills> list = new ArrayList<>();
+        ResultSet rs = pre.executeQuery();
+        while (rs.next()) {
+            Bills bill = new Bills();
+            bill.setId(rs.getLong("Id"));
+            bill.setUsername(rs.getString("Username"));
+            bill.setCardId(rs.getInt("CardId"));
+            bill.setCheckin(rs.getTimestamp("Checkin"));
+            bill.setCheckout(rs.getTimestamp("Checkout"));
+            bill.setStatus(rs.getInt("Status"));
+            list.add(bill);
+        }
+        return list;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+     private List<Bills> getBillsBySql(String sql) {
+    List<Bills> list = new ArrayList<>();
+    try (Connection con = DataConnection.open(); PreparedStatement pre = con.prepareStatement(sql)) {
+        ResultSet rs = pre.executeQuery();
+        while (rs.next()) {
+            Bills bill = new Bills();
+            bill.setId(rs.getLong("Id"));
+            bill.setUsername(rs.getString("Username"));
+            bill.setCardId(rs.getInt("CardId"));
+            bill.setCheckin(rs.getTimestamp("Checkin"));
+            bill.setCheckout(rs.getTimestamp("Checkout"));
+            bill.setStatus(rs.getInt("Status"));
+            list.add(bill);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+public List<Bills> findToday() {
+    String sql = "SELECT * FROM Bills WHERE CONVERT(DATE, Checkin) = CONVERT(DATE, GETDATE())";
+    return getBillsBySql(sql);
+}
+public List<Bills> findThisWeek() {
+    String sql = "SELECT * FROM Bills WHERE DATEPART(WEEK, Checkin) = DATEPART(WEEK, GETDATE()) AND YEAR(Checkin) = YEAR(GETDATE())";
+    return getBillsBySql(sql);
+}
+
+public List<Bills> findThisMonth() {
+    String sql = "SELECT * FROM Bills WHERE MONTH(Checkin) = MONTH(GETDATE()) AND YEAR(Checkin) = YEAR(GETDATE())";
+    return getBillsBySql(sql);
+}
+
+public List<Bills> findThisYear() {
+    String sql = "SELECT * FROM Bills WHERE YEAR(Checkin) = YEAR(GETDATE())";
+    return getBillsBySql(sql);
+}
+
+public List<Bills> findByDateRange(Date fromDate, Date toDate) {
+    String sql = "SELECT * FROM Bills WHERE Checkin BETWEEN ? AND ?";
+    try (Connection con = DataConnection.open(); PreparedStatement pre = con.prepareStatement(sql)) {
+        pre.setTimestamp(1, new java.sql.Timestamp(fromDate.getTime()));
+        pre.setTimestamp(2, new java.sql.Timestamp(toDate.getTime()));
+        List<Bills> list = new ArrayList<>();
+        ResultSet rs = pre.executeQuery();
+        while (rs.next()) {
+            Bills bill = new Bills();
+            bill.setId(rs.getLong("Id"));
+            bill.setUsername(rs.getString("Username"));
+            bill.setCardId(rs.getInt("CardId"));
+            bill.setCheckin(rs.getTimestamp("Checkin"));
+            bill.setCheckout(rs.getTimestamp("Checkout"));
+            bill.setStatus(rs.getInt("Status"));
+            list.add(bill);
+        }
+        return list;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return new ArrayList<>();
+}
 }
