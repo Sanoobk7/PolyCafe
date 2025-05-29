@@ -497,7 +497,7 @@ private void Xoa() {
         txtTuNgay = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         txtDenNgay = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        BtnLoc = new javax.swing.JButton();
         cboThoiGian = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -578,11 +578,11 @@ private void Xoa() {
 
         jLabel2.setText("Đến ngày:");
 
-        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Search.png"))); // NOI18N
-        jButton2.setText("Lọc");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        BtnLoc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Search.png"))); // NOI18N
+        BtnLoc.setText("Lọc");
+        BtnLoc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                BtnLocActionPerformed(evt);
             }
         });
 
@@ -615,7 +615,7 @@ private void Xoa() {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtDenNgay, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(BtnLoc)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(cboThoiGian, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -635,7 +635,7 @@ private void Xoa() {
                             .addContainerGap()
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(txtDenNgay, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(BtnLoc, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addComponent(jLabel2))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
@@ -969,7 +969,7 @@ try {
 }
     }//GEN-LAST:event_cboThoiGianActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void BtnLocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLocActionPerformed
         String fromDateStr = txtTuNgay.getText().trim();
     String toDateStr = txtDenNgay.getText().trim();
 
@@ -1030,7 +1030,7 @@ try {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_BtnLocActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1083,6 +1083,7 @@ try {
     private javax.swing.JButton BtnFirst;
     private javax.swing.JButton BtnLamMoi;
     private javax.swing.JButton BtnLast;
+    private javax.swing.JButton BtnLoc;
     private javax.swing.JButton BtnNext;
     private javax.swing.JButton BtnThem;
     private javax.swing.JButton BtnXoa;
@@ -1090,7 +1091,6 @@ try {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JComboBox<String> cboThoiGian;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
