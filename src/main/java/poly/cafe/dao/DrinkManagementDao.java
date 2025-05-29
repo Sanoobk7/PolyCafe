@@ -188,4 +188,46 @@ public class DrinkManagementDao {
         }
         return false;
     }
+    public Categories findCategoryByName(String name) {
+    String sql = "SELECT * FROM Categories WHERE Name = ?";
+    try (Connection con = DataConnection.open();
+         PreparedStatement pre = con.prepareStatement(sql)) {
+        pre.setString(1, name);
+        ResultSet rs = pre.executeQuery();
+        if (rs.next()) {
+            Categories category = new Categories();
+            category.setId(rs.getString("Id"));
+            category.setName(rs.getString("Name"));
+            return category;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+
+public List<Drinks> findByCategoryId(String categoryId) {
+    String sql = "SELECT * FROM Drinks WHERE CategoryId = ?";
+    try (Connection con = DataConnection.open();
+         PreparedStatement pre = con.prepareStatement(sql)) {
+        pre.setString(1, categoryId);
+        ResultSet rs = pre.executeQuery();
+        List<Drinks> list = new ArrayList<>();
+        while (rs.next()) {
+            Drinks drink = new Drinks();
+            drink.setId(rs.getString("Id"));
+            drink.setName(rs.getString("Name"));
+            drink.setUnitPrice(rs.getDouble("UnitPrice"));
+            drink.setDiscount(rs.getDouble("Discount"));
+            drink.setImage(rs.getString("Image"));
+            drink.setAvailable(rs.getBoolean("Available"));
+            drink.setCategoryId(rs.getString("CategoryId"));
+            list.add(drink);
+        }
+        return list;
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 }

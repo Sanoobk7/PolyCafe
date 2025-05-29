@@ -32,6 +32,11 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 import java.io.File;
 import java.util.List;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.Component;
+import java.awt.Color;
+
 /**
  *
  * @author Home
@@ -57,8 +62,54 @@ private String photoPath = "";
         initSlider();
         loadCategoryDataToTable();
         loadDrinkDataToTable();
+        styleCategoryTable();
         LamMoi();
     }
+    private void filterDrinksByCategory(int row) {
+    if (row >= 0 && row < tblDrinks.getRowCount()) {
+        String categoryName = (String) tblDrinks.getValueAt(row, 0);
+        Categories category = dao.findCategoryByName(categoryName);
+        if (category != null) {
+            drinkTableModel.setRowCount(0); // Xóa dữ liệu cũ
+            List<Drinks> drinks = dao.findByCategoryId(category.getId());
+            if (drinks != null) {
+                try {
+                    for (Drinks drink : drinks) {
+                        String status = drink.isAvailable() ? "Sẵn sàng" : "Hết";
+                        drinkTableModel.addRow(new Object[]{
+                            drink.getId(),
+                            drink.getName(),
+                            drink.getUnitPrice(),
+                            drink.getDiscount(),
+                            status,
+                            categoryName,
+                            false // Checkbox mặc định
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+    }
+}
+    private void styleCategoryTable() {
+    tblDrinks.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            c.setFont(c.getFont().deriveFont(java.awt.Font.BOLD)); // Đặt chữ in đậm
+            if (isSelected) {
+                c.setForeground(Color.RED); // Chữ đỏ khi chọn
+            } else {
+                c.setForeground(Color.BLUE); // Chữ xanh dương khi không chọn
+            }
+            return c;
+        }
+    });
+}
+
    private void initDrinkTable() {
     drinkTableModel = new DefaultTableModel(
         new String[]{"Mã đồ uống", "Tên đồ uống", "Đơn giá", "Giảm giá", "Trạng thái", "Loại", "Chọn"}, 0
@@ -174,21 +225,25 @@ private void xoaCacDongDaChon() {
             "Thông báo", JOptionPane.WARNING_MESSAGE);
     }}
     private void loadCategoryDataToTable() {
-        categoryTableModel.setRowCount(0);
-        List<Categories> list = dao.findAllCategories();
-        if (list == null || list.isEmpty()) {
-            return;
-        }
-
-        try {
-            for (Categories category : list) {
-                categoryTableModel.addRow(new Object[]{category.getName()});
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu loại đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
+    categoryTableModel.setRowCount(0);
+    List<Categories> list = dao.findAllCategories();
+    if (list == null || list.isEmpty()) {
+        return;
     }
+
+    try {
+        for (Categories category : list) {
+            categoryTableModel.addRow(new Object[]{category.getName()});
+        }
+        if (tblDrinks.getRowCount() > 0) {
+            tblDrinks.setRowSelectionInterval(0, 0); // Chọn dòng đầu tiên
+            filterDrinksByCategory(0); // Lọc đồ uống
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu loại đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+}
     private void chonAnh() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "png", "jpeg", "gif"));
@@ -400,6 +455,7 @@ private void xoaCacDongDaChon() {
         sldGiamGia.setValue(0);
         txtPhanTram.setText("0%");
         buttonGroup1.clearSelection();
+        loadDrinkDataToTable();
         lblPhotoPath.setIcon(new ImageIcon("C:\\Users\\Home\\Documents\\NetBeansProjects\\PolyCafe\\src\\main\\resources\\img\\catloveu.png"));
     }
 
@@ -550,6 +606,11 @@ private void xoaCacDongDaChon() {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        tblDrinks.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDrinksMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tblDrinks);
@@ -957,6 +1018,14 @@ lastRow();
     private void btnXoaDaChonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaDaChonActionPerformed
         xoaCacDongDaChon();
     }//GEN-LAST:event_btnXoaDaChonActionPerformed
+
+    private void tblDrinksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDrinksMouseClicked
+int row = tblDrinks.rowAtPoint(evt.getPoint());
+    if (row >= 0) {
+        tblDrinks.setRowSelectionInterval(row, row);
+        filterDrinksByCategory(row);
+    }
+    }//GEN-LAST:event_tblDrinksMouseClicked
 
     /**
      * @param args the command line arguments
