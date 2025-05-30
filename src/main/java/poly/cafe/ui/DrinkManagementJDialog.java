@@ -558,7 +558,6 @@ private void xoaCacDongDaChon() {
         btnBoChonTatCa = new javax.swing.JButton();
         btnXoaDaChon = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        lblPhotoPath = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         BtnLamMoi = new javax.swing.JButton();
         BtnSua = new javax.swing.JButton();
@@ -582,6 +581,7 @@ private void xoaCacDongDaChon() {
         txtTenDoUong = new javax.swing.JTextField();
         txtDonGia = new javax.swing.JTextField();
         txtPhanTram = new javax.swing.JLabel();
+        lblPhotoPath = new javax.swing.JLabel();
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete.png"))); // NOI18N
         jButton2.setText("bỏ chọn tất cả");
@@ -695,14 +695,6 @@ private void xoaCacDongDaChon() {
         );
 
         jTabbedPane1.addTab("Danh sách", jPanel1);
-
-        lblPhotoPath.setFont(new java.awt.Font("Segoe UI", 0, 1)); // NOI18N
-        lblPhotoPath.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/catloveu.png"))); // NOI18N
-        lblPhotoPath.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lblPhotoPathMouseClicked(evt);
-            }
-        });
 
         jPanel4.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
@@ -856,6 +848,15 @@ private void xoaCacDongDaChon() {
 
         txtPhanTram.setText("0%");
 
+        lblPhotoPath.setFont(new java.awt.Font("Segoe UI", 0, 1)); // NOI18N
+        lblPhotoPath.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/catloveu.png"))); // NOI18N
+        lblPhotoPath.setText("jLabel1");
+        lblPhotoPath.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblPhotoPathMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -902,9 +903,9 @@ private void xoaCacDongDaChon() {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3))
@@ -928,11 +929,13 @@ private void xoaCacDongDaChon() {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(txtDonGia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
+                        .addGap(19, 19, 19)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
                             .addComponent(jLabel7)))
-                    .addComponent(lblPhotoPath))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(lblPhotoPath, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(rdoSan)
@@ -940,7 +943,7 @@ private void xoaCacDongDaChon() {
                     .addComponent(cboLoai, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(11, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Biểu mẫu", jPanel2);
@@ -1007,10 +1010,6 @@ firstRow();
 lastRow();
     }//GEN-LAST:event_jButton11ActionPerformed
 
-    private void lblPhotoPathMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPhotoPathMouseClicked
-      chonAnh();
-    }//GEN-LAST:event_lblPhotoPathMouseClicked
-
     private void btnBoChonTatCaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBoChonTatCaActionPerformed
         boChonTatCa();
     }//GEN-LAST:event_btnBoChonTatCaActionPerformed
@@ -1026,6 +1025,10 @@ int row = tblDrinks.rowAtPoint(evt.getPoint());
         filterDrinksByCategory(row);
     }
     }//GEN-LAST:event_tblDrinksMouseClicked
+
+    private void lblPhotoPathMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPhotoPathMouseClicked
+     chonAnh();
+    }//GEN-LAST:event_lblPhotoPathMouseClicked
 
     /**
      * @param args the command line arguments
