@@ -4,20 +4,50 @@
  */
 package poly.cafe.ui;
 
+import java.awt.Frame;
+import javax.swing.JOptionPane;
+import poly.cafe.ui.BillJDialog;
+import poly.cafe.ui.BillManagementJDialog;
+import poly.cafe.entity.Cards;
+import poly.cafe.entity.Bills;
+import poly.cafe.entity.BillDetails;
+import poly.cafe.dao.BillsManagerDao;
+import poly.cafe.ui.IDCardManagementJDialog;
+import poly.cafe.util.XAuth;
 /**
  *
  * @author Home
  */
 public class SaleJDialog extends javax.swing.JDialog {
-
+private final Frame parentFrame; // Store the parent Frame
     /**
      * Creates new form SaleJDialog
      */
     public SaleJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        this.parentFrame = parent; // Save the parent Frame
         setLocationRelativeTo(null);
+        
     }
+  
+  void openBillDialog() {
+        try {
+            new BillJDialog(parentFrame, true).setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error opening bill dialog: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
+
+//Form này có 30 button tên là BtnCard1 - BtnCard30 khi ấn vào 1 button thì lấy button từ IDCardManagerment button ở đấy có 3 trạng thái comper lose error
+//khi ở trạng thái error và lose thì không thể tương tác button sẽ tối màu và không ấn được, button ở trạng thái oper thì sẽ load vào Form billJDialog với số thẻ tương ứng
+//button oper có background màu xanh lá và button không màu tức là thẻ đấy chưa tồn tại trong csdl và chưa được tạo trong ICcard thì khi ấn vào sẽ tự động tạo
+//thẻ trạng thái ope và khi Form Bill xuất hiện thì load số thẻ vào text Field
+//id của hóa đơn chi tiết tư sinh giống hóa đơn và trong cơ sở dữ liệu ơ hóa đơn chi tiết có billid liên kết với khóa chính của id để khi 
+//chuyển đến hóa đơn có mã tương ứng ở quản lý hóa đơn thì sẽ load thông tin của hóa đơn đó lên từ đó
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -29,152 +59,157 @@ public class SaleJDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton13 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
-        jButton12 = new javax.swing.JButton();
-        jButton19 = new javax.swing.JButton();
-        jButton14 = new javax.swing.JButton();
-        jButton15 = new javax.swing.JButton();
-        jButton16 = new javax.swing.JButton();
-        jButton17 = new javax.swing.JButton();
-        jButton18 = new javax.swing.JButton();
-        jButton25 = new javax.swing.JButton();
-        jButton20 = new javax.swing.JButton();
-        jButton21 = new javax.swing.JButton();
-        jButton22 = new javax.swing.JButton();
-        jButton23 = new javax.swing.JButton();
-        jButton24 = new javax.swing.JButton();
-        jButton26 = new javax.swing.JButton();
-        jButton27 = new javax.swing.JButton();
-        jButton28 = new javax.swing.JButton();
-        jButton29 = new javax.swing.JButton();
-        jButton30 = new javax.swing.JButton();
+        BtnCard1 = new javax.swing.JButton();
+        BtnCard2 = new javax.swing.JButton();
+        BtnCard3 = new javax.swing.JButton();
+        BtnCard4 = new javax.swing.JButton();
+        BtnCard5 = new javax.swing.JButton();
+        BtnCard6 = new javax.swing.JButton();
+        BtnCard7 = new javax.swing.JButton();
+        BtnCard8 = new javax.swing.JButton();
+        BtnCard9 = new javax.swing.JButton();
+        BtnCard10 = new javax.swing.JButton();
+        BtnCard11 = new javax.swing.JButton();
+        BtnCard12 = new javax.swing.JButton();
+        BtnCard13 = new javax.swing.JButton();
+        BtnCard14 = new javax.swing.JButton();
+        BtnCard15 = new javax.swing.JButton();
+        BtnCard16 = new javax.swing.JButton();
+        BtnCard17 = new javax.swing.JButton();
+        BtnCard18 = new javax.swing.JButton();
+        BtnCard19 = new javax.swing.JButton();
+        BtnCard20 = new javax.swing.JButton();
+        BtnCard21 = new javax.swing.JButton();
+        BtnCard22 = new javax.swing.JButton();
+        BtnCard23 = new javax.swing.JButton();
+        BtnCard24 = new javax.swing.JButton();
+        BtnCard25 = new javax.swing.JButton();
+        BtnCard26 = new javax.swing.JButton();
+        BtnCard27 = new javax.swing.JButton();
+        BtnCard28 = new javax.swing.JButton();
+        BtnCard29 = new javax.swing.JButton();
+        BtnCard30 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Thẻ định danh");
 
         jPanel1.setLayout(new java.awt.GridLayout(0, 6, 5, 5));
 
-        jButton1.setBackground(new java.awt.Color(102, 255, 102));
-        jButton1.setText("Card #1");
-        jPanel1.add(jButton1);
-
-        jButton7.setBackground(new java.awt.Color(102, 255, 102));
-        jButton7.setText("Card #2");
-        jPanel1.add(jButton7);
-
-        jButton2.setText("Card #3");
-        jPanel1.add(jButton2);
-
-        jButton3.setBackground(new java.awt.Color(102, 255, 102));
-        jButton3.setText("Card #4");
-        jPanel1.add(jButton3);
-
-        jButton10.setText("Card #5");
-        jPanel1.add(jButton10);
-
-        jButton4.setText("Card #6");
-        jPanel1.add(jButton4);
-
-        jButton5.setText("Card #7");
-        jPanel1.add(jButton5);
-
-        jButton13.setText("Card #8");
-        jPanel1.add(jButton13);
-
-        jButton6.setBackground(new java.awt.Color(102, 255, 102));
-        jButton6.setText("Card #9");
-        jPanel1.add(jButton6);
-
-        jButton8.setText("Card #10");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
+        BtnCard1.setBackground(new java.awt.Color(102, 255, 102));
+        BtnCard1.setText("Card #1");
+        BtnCard1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
+                BtnCard1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton8);
+        jPanel1.add(BtnCard1);
 
-        jButton9.setBackground(new java.awt.Color(102, 255, 102));
-        jButton9.setText("Card #11");
-        jPanel1.add(jButton9);
+        BtnCard2.setBackground(new java.awt.Color(102, 255, 102));
+        BtnCard2.setText("Card #2");
+        jPanel1.add(BtnCard2);
 
-        jButton11.setBackground(new java.awt.Color(102, 255, 102));
-        jButton11.setText("Card #12");
-        jPanel1.add(jButton11);
+        BtnCard3.setText("Card #3");
+        jPanel1.add(BtnCard3);
 
-        jButton12.setText("Card #13");
-        jPanel1.add(jButton12);
+        BtnCard4.setBackground(new java.awt.Color(102, 255, 102));
+        BtnCard4.setText("Card #4");
+        jPanel1.add(BtnCard4);
 
-        jButton19.setText("Card #14");
-        jPanel1.add(jButton19);
+        BtnCard5.setText("Card #5");
+        jPanel1.add(BtnCard5);
 
-        jButton14.setText("Card #15");
-        jButton14.addActionListener(new java.awt.event.ActionListener() {
+        BtnCard6.setText("Card #6");
+        jPanel1.add(BtnCard6);
+
+        BtnCard7.setText("Card #7");
+        jPanel1.add(BtnCard7);
+
+        BtnCard8.setText("Card #8");
+        jPanel1.add(BtnCard8);
+
+        BtnCard9.setBackground(new java.awt.Color(102, 255, 102));
+        BtnCard9.setText("Card #9");
+        jPanel1.add(BtnCard9);
+
+        BtnCard10.setText("Card #10");
+        BtnCard10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton14ActionPerformed(evt);
+                BtnCard10ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton14);
+        jPanel1.add(BtnCard10);
 
-        jButton15.setText("Card #16");
-        jButton15.addActionListener(new java.awt.event.ActionListener() {
+        BtnCard11.setBackground(new java.awt.Color(102, 255, 102));
+        BtnCard11.setText("Card #11");
+        jPanel1.add(BtnCard11);
+
+        BtnCard12.setBackground(new java.awt.Color(102, 255, 102));
+        BtnCard12.setText("Card #12");
+        jPanel1.add(BtnCard12);
+
+        BtnCard13.setText("Card #13");
+        jPanel1.add(BtnCard13);
+
+        BtnCard14.setText("Card #14");
+        jPanel1.add(BtnCard14);
+
+        BtnCard15.setText("Card #15");
+        BtnCard15.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton15ActionPerformed(evt);
+                BtnCard15ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton15);
+        jPanel1.add(BtnCard15);
 
-        jButton16.setText("Card #17");
-        jPanel1.add(jButton16);
+        BtnCard16.setText("Card #16");
+        BtnCard16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnCard16ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(BtnCard16);
 
-        jButton17.setText("Card #18");
-        jPanel1.add(jButton17);
+        BtnCard17.setText("Card #17");
+        jPanel1.add(BtnCard17);
 
-        jButton18.setText("Card #19");
-        jPanel1.add(jButton18);
+        BtnCard18.setText("Card #18");
+        jPanel1.add(BtnCard18);
 
-        jButton25.setText("Card #20");
-        jPanel1.add(jButton25);
+        BtnCard19.setText("Card #19");
+        jPanel1.add(BtnCard19);
 
-        jButton20.setText("Card #21");
-        jPanel1.add(jButton20);
+        BtnCard20.setText("Card #20");
+        jPanel1.add(BtnCard20);
 
-        jButton21.setText("Card #22");
-        jPanel1.add(jButton21);
+        BtnCard21.setText("Card #21");
+        jPanel1.add(BtnCard21);
 
-        jButton22.setText("Card #23");
-        jPanel1.add(jButton22);
+        BtnCard22.setText("Card #22");
+        jPanel1.add(BtnCard22);
 
-        jButton23.setText("Card #24");
-        jPanel1.add(jButton23);
+        BtnCard23.setText("Card #23");
+        jPanel1.add(BtnCard23);
 
-        jButton24.setText("Card #25");
-        jPanel1.add(jButton24);
+        BtnCard24.setText("Card #24");
+        jPanel1.add(BtnCard24);
 
-        jButton26.setText("Card #26");
-        jPanel1.add(jButton26);
+        BtnCard25.setText("Card #25");
+        jPanel1.add(BtnCard25);
 
-        jButton27.setText("Card #27");
-        jPanel1.add(jButton27);
+        BtnCard26.setText("Card #26");
+        jPanel1.add(BtnCard26);
 
-        jButton28.setText("Card #28");
-        jPanel1.add(jButton28);
+        BtnCard27.setText("Card #27");
+        jPanel1.add(BtnCard27);
 
-        jButton29.setText("Card #29");
-        jPanel1.add(jButton29);
+        BtnCard28.setText("Card #28");
+        jPanel1.add(BtnCard28);
 
-        jButton30.setText("Card #30");
-        jPanel1.add(jButton30);
+        BtnCard29.setText("Card #29");
+        jPanel1.add(BtnCard29);
+
+        BtnCard30.setText("Card #30");
+        jPanel1.add(BtnCard30);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -190,17 +225,21 @@ public class SaleJDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+    private void BtnCard10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCard10ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton8ActionPerformed
+    }//GEN-LAST:event_BtnCard10ActionPerformed
 
-    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+    private void BtnCard15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCard15ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton14ActionPerformed
+    }//GEN-LAST:event_BtnCard15ActionPerformed
 
-    private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
+    private void BtnCard16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCard16ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton15ActionPerformed
+    }//GEN-LAST:event_BtnCard16ActionPerformed
+
+    private void BtnCard1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCard1ActionPerformed
+       openBillDialog();
+    }//GEN-LAST:event_BtnCard1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -248,36 +287,36 @@ public class SaleJDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton12;
-    private javax.swing.JButton jButton13;
-    private javax.swing.JButton jButton14;
-    private javax.swing.JButton jButton15;
-    private javax.swing.JButton jButton16;
-    private javax.swing.JButton jButton17;
-    private javax.swing.JButton jButton18;
-    private javax.swing.JButton jButton19;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton20;
-    private javax.swing.JButton jButton21;
-    private javax.swing.JButton jButton22;
-    private javax.swing.JButton jButton23;
-    private javax.swing.JButton jButton24;
-    private javax.swing.JButton jButton25;
-    private javax.swing.JButton jButton26;
-    private javax.swing.JButton jButton27;
-    private javax.swing.JButton jButton28;
-    private javax.swing.JButton jButton29;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton30;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
+    private javax.swing.JButton BtnCard1;
+    private javax.swing.JButton BtnCard10;
+    private javax.swing.JButton BtnCard11;
+    private javax.swing.JButton BtnCard12;
+    private javax.swing.JButton BtnCard13;
+    private javax.swing.JButton BtnCard14;
+    private javax.swing.JButton BtnCard15;
+    private javax.swing.JButton BtnCard16;
+    private javax.swing.JButton BtnCard17;
+    private javax.swing.JButton BtnCard18;
+    private javax.swing.JButton BtnCard19;
+    private javax.swing.JButton BtnCard2;
+    private javax.swing.JButton BtnCard20;
+    private javax.swing.JButton BtnCard21;
+    private javax.swing.JButton BtnCard22;
+    private javax.swing.JButton BtnCard23;
+    private javax.swing.JButton BtnCard24;
+    private javax.swing.JButton BtnCard25;
+    private javax.swing.JButton BtnCard26;
+    private javax.swing.JButton BtnCard27;
+    private javax.swing.JButton BtnCard28;
+    private javax.swing.JButton BtnCard29;
+    private javax.swing.JButton BtnCard3;
+    private javax.swing.JButton BtnCard30;
+    private javax.swing.JButton BtnCard4;
+    private javax.swing.JButton BtnCard5;
+    private javax.swing.JButton BtnCard6;
+    private javax.swing.JButton BtnCard7;
+    private javax.swing.JButton BtnCard8;
+    private javax.swing.JButton BtnCard9;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
