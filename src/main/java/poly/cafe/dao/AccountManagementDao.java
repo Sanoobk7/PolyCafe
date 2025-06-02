@@ -37,7 +37,6 @@ public class AccountManagementDao {
             e.printStackTrace();
         }
         return false;
-
     }
 
     public boolean update(Users nv) {

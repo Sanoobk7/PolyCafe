@@ -19,6 +19,7 @@ import poly.cafe.dao.DataConnection;
  */
 public class BillsManagerDao {
 
+    
     // Insert a new bill
     public boolean insert(Bills bill) {
         String sql = "INSERT INTO Bills(Username, CardId, Checkin, Checkout, Status) VALUES (?, ?, ?, ?, ?)";
@@ -144,6 +145,20 @@ public class BillsManagerDao {
         return null;
     }
 
+    public boolean checkBillExists2(long billId) {
+        String sql = "SELECT COUNT(1) FROM Bills WHERE Id = ?";
+        try (Connection conn = DataConnection.open();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setLong(1, billId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     // Check if a bill exists by ID
     public boolean checkBillExists(long id) {
         String sql = "SELECT COUNT(*) FROM Bills WHERE Id = ?";
@@ -276,4 +291,19 @@ public List<Bills> findByDateRange(Date fromDate, Date toDate) {
     }
     return new ArrayList<>();
 }
+public boolean isCardOccupied(int cardId) {
+        String sql = "SELECT COUNT(*) FROM Bills WHERE CardId = ? AND Status = 0";
+        try (Connection con = DataConnection.open();
+             PreparedStatement pre = con.prepareStatement(sql)) {
+            pre.setInt(1, cardId);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 }

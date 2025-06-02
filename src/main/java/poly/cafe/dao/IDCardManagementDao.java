@@ -148,4 +148,18 @@ public class IDCardManagementDao {
     }
     return false;
 }
+   public int getCardStatus(int cardId) {
+        String sql = "SELECT Status FROM Cards WHERE Id = ?";
+        try (Connection con = DataConnection.open();
+             PreparedStatement pre = con.prepareStatement(sql)) {
+            pre.setInt(1, cardId);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("Status");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1; // Trả về -1 nếu không tìm thấy thẻ
+    }
 }

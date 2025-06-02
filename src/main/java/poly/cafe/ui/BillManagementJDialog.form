@@ -570,7 +570,7 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="&#x111;ang b&#x1ea3;o tr&#xec;"/>
+                <Property name="text" type="java.lang.String" value="&#x110;ang ph&#x1ee5;c v&#x1ee5;"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="rdoHoanThanh">
@@ -640,6 +640,9 @@
                       <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTable2MouseClicked"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

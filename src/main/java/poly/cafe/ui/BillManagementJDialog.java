@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package poly.cafe.ui;
+import java.sql.SQLException;
 import poly.cafe.entity.Bills;
 import poly.cafe.dao.BillDao;
 import poly.cafe.dao.CrudDAO;
@@ -25,6 +26,11 @@ import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import poly.cafe.dao.BillDetailsDao;
+import poly.cafe.dao.DrinkDAO;
+import poly.cafe.dao.impl.DrinkDAOImpl;
+import poly.cafe.entity.BillDetails;
+import poly.cafe.entity.Drinks;
 /**
  *
  * @author Home
@@ -44,7 +50,7 @@ BillsManagerDao dao = new BillsManagerDao();
         setLocationRelativeTo(null);
         initTable1();
         initComboBox();
-        loaddatatotable();
+        loaddatatotable();      
     }
 
 private void initComboBox() {
@@ -105,7 +111,7 @@ public void loaddatatotable() {
             String status;
             switch (bill.getStatus()) {
                 case 0:
-                    status = "Đang bảo trì";
+                    status = "Đang phục vụ";
                     break;
                 case 1:
                     status = "Hoàn thành";
@@ -473,6 +479,59 @@ private void Xoa() {
                 "Thông báo", JOptionPane.WARNING_MESSAGE);
         }
     }
+//    public void init() {
+//        tableModel = new DefaultTableModel();
+//        tableModel.setColumnIdentifiers(new String[]{"Đồ uống", "Đơn giá", "Giảm giá", "Số lượng", "Thành tiền"});
+//        jTable2.setModel(tableModel);
+//    }
+//
+//    public void loaddata() {
+//    tableModel.setRowCount(0); // Xóa dữ liệu cũ trong jTable2
+//
+//    // Lấy billId từ txtMaPhieu
+//    String maPhieuStr = txtMaPhieu.getText().trim();
+//    if (maPhieuStr.isEmpty()) {
+//        return; // Không làm gì nếu txtMaPhieu rỗng
+//    }
+//
+//    long billId;
+//    try {
+//        billId = Long.parseLong(maPhieuStr);
+//    } catch (NumberFormatException e) {
+//        return; // Không làm gì nếu mã hóa đơn không hợp lệ
+//    }
+//
+//    try {
+//        // Truy vấn chi tiết hóa đơn
+//        BillDetailsDao dao = new BillDetailsDao();
+//        List<BillDetails> list = dao.findByBillId(billId);
+//
+//        if (list.isEmpty()) {
+//            return; // Để bảng trống nếu không có chi tiết
+//        }
+//
+//        // Truy vấn tên đồ uống
+//        DrinkDAO drinkDao = new DrinkDAOImpl();
+//        for (BillDetails detail : list) {
+//            Drinks drink = drinkDao.findById(detail.getDrinkId());
+//            String drinkName = drink != null ? drink.getName() : detail.getDrinkId();
+//
+//            // Tính thành tiền: UnitPrice * (1 - Discount/100) * Quantity
+//            double total = detail.getUnitPrice() * (1 - detail.getDiscount() / 100) * detail.getQuantity();
+//
+//            // Thêm dòng vào tableModel
+//            tableModel.addRow(new Object[]{
+//                drinkName,
+//                detail.getUnitPrice(),
+//                detail.getDiscount(),
+//                detail.getQuantity(),
+//                total
+//            });
+//        }
+//    } catch (Exception e) {
+//        JOptionPane.showMessageDialog(this, "Lỗi khi tải chi tiết hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+//    }
+//}
 
 
     /**
@@ -777,7 +836,7 @@ private void Xoa() {
         jLabel8.setText("Người tạo");
 
         buttonGroup1.add(rdoBaoTri);
-        rdoBaoTri.setText("đang bảo trì");
+        rdoBaoTri.setText("Đang phục vụ");
 
         buttonGroup1.add(rdoHoanThanh);
         rdoHoanThanh.setText("hoàn thành");
@@ -796,6 +855,11 @@ private void Xoa() {
                 "Đồ uống", "Đơn giá", "Giảm giá", "Số lượng", "Thành tiền"
             }
         ));
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable2MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable2);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -1031,6 +1095,10 @@ try {
         JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_BtnLocActionPerformed
+
+    private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTable2MouseClicked
 
     /**
      * @param args the command line arguments
