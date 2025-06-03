@@ -524,13 +524,13 @@ public void create() {
 
     // Kiểm tra nếu mã ID bị để trống
     if (entity.getId().trim().isEmpty()) {
-        XDialog.alert("Mã danh mục không được để trống!", "Cảnh báo");
-        return; // Dừng không cho tạo
+        XDialog.alert("Thiếu thông tin: Bạn chưa nhập **Mã loại đồ uống**.\nVui lòng nhập mã loại để tiếp tục!", "Thiếu mã loại");
+        return;
     }
 
     // Kiểm tra nếu tên danh mục bị để trống
     if (entity.getName().trim().isEmpty()) {
-        XDialog.alert("Tên danh mục không được để trống!", "Cảnh báo");
+        XDialog.alert("Thiếu thông tin: Bạn chưa nhập **Tên loại đồ uống**.\nVui lòng nhập tên loại để tiếp tục!", "Thiếu tên loại");
         return;
     }
 
@@ -538,44 +538,48 @@ public void create() {
     boolean isDuplicate = items.stream()
         .anyMatch(c -> c.getId().equalsIgnoreCase(entity.getId()));
     if (isDuplicate) {
-        XDialog.alert("Mã danh mục đã tồn tại. Vui lòng nhập mã khác!", "Lỗi trùng mã");
+        XDialog.alert("Mã loại đồ uống \"" + entity.getId() + "\" đã tồn tại.\nVui lòng nhập mã khác!", "Trùng mã");
         return;
     }
 
     // Nếu hợp lệ, hỏi xác nhận người dùng trước khi tạo
-    if (XDialog.confirm("Bạn có chắc muốn thêm mới danh mục này?")) {
+    if (XDialog.confirm("Bạn có chắc muốn thêm mới loại đồ uống này với mã \"" + entity.getId() + "\"?")) {
         try {
             dao.create(entity); // Thêm vào database
             this.fillToTable(); // Load lại bảng
             this.clear(); // Xoá trắng form
-            XDialog.alert("Thêm danh mục mới thành công!", "Thành công");
+            XDialog.alert("Thêm loại đồ uống mới thành công!", "Thành công");
         } catch (Exception e) {
             // Nếu lỗi xảy ra khi tạo
-            XDialog.alert("Lỗi khi thêm danh mục: " + e.getMessage(), "Lỗi");
+            XDialog.alert("Lỗi khi thêm loại đồ uống: " + e.getMessage(), "Lỗi");
         }
     }
 }
- 
+
 @Override 
 public void update() { 
     Categories entity = this.getForm(); // Lấy dữ liệu từ form
 
     // 1. Kiểm tra mã danh mục có bị trống không
     if (entity.getId().trim().isEmpty()) {
-        XDialog.alert("Mã danh mục không được để trống!", "Cảnh báo");
+        XDialog.alert("Thiếu thông tin: Bạn chưa nhập **Mã loại đồ uống**.\nVui lòng nhập mã để tiếp tục!", "Thiếu mã loại");
         return;
     }
 
-    // 2. Không kiểm tra trống tên nữa
+    // 2. Kiểm tra tên danh mục có bị trống không
+    if (entity.getName().trim().isEmpty()) {
+        XDialog.alert("Thiếu thông tin: Bạn chưa nhập **Tên loại đồ uống**.\nVui lòng nhập tên để tiếp tục!", "Thiếu tên loại");
+        return;
+    }
 
     // 3. Xác nhận người dùng trước khi cập nhật
-    if (XDialog.confirm("Bạn có chắc muốn cập nhật danh mục này?")) {
+    if (XDialog.confirm("Bạn có chắc muốn cập nhật loại đồ uống có mã \"" + entity.getId() + "\"?")) {
         try {
             dao.update(entity); // Cập nhật vào CSDL
             this.fillToTable(); // Load lại dữ liệu vào bảng
-            XDialog.alert("Cập nhật danh mục thành công!", "Thành công");
+            XDialog.alert("Cập nhật loại đồ uống thành công!", "Thành công");
         } catch (Exception e) {
-            XDialog.alert("Lỗi khi cập nhật danh mục: " + e.getMessage(), "Lỗi");
+            XDialog.alert("Lỗi khi cập nhật loại đồ uống: " + e.getMessage(), "Lỗi");
         }
     }
 }
@@ -586,30 +590,31 @@ public void delete() {
 
     // Kiểm tra nếu chưa chọn danh mục (ID rỗng)
     if (id.isEmpty()) {
-        XDialog.alert("Vui lòng chọn danh mục cần xoá!", "Cảnh báo");
+        XDialog.alert("Không thể xoá: Bạn chưa chọn loại đồ uống nào để xoá.\nVui lòng chọn một dòng trong bảng hoặc nhập mã vào ô \"Mã loại đồ uống\".", "Thiếu thông tin");
         return;
     }
 
     // Hỏi xác nhận trước khi xoá
-    if (XDialog.confirm("Bạn có chắc muốn xoá danh mục có mã: " + id + "?")) {
+    if (XDialog.confirm("Bạn có chắc muốn xoá loại đồ uống có mã: \"" + id + "\"?")) {
         try {
             dao.deleteById(id); // Xoá trong CSDL
             this.fillToTable(); // Load lại bảng
             this.clear(); // Xoá trắng form
-            XDialog.alert("Xoá danh mục thành công!", "Thành công");
+            XDialog.alert("Xoá loại đồ uống thành công!", "Thành công");
         } catch (Exception e) {
-            XDialog.alert("Lỗi khi xoá danh mục: " + e.getMessage(), "Lỗi");
+            XDialog.alert("Lỗi khi xoá loại đồ uống: " + e.getMessage(), "Lỗi");
         }
     }
 }
+
  
 @Override 
 public void clear() {
     if (!txtId.getText().isEmpty() || !txtName.getText().isEmpty()) {
-    if (!XDialog.confirm("Bạn có chắc muốn xoá trắng biểu mẫu đang nhập?")) {
-        return;
+        if (!XDialog.confirm("Biểu mẫu hiện tại đang có dữ liệu.\nBạn có chắc muốn xoá trắng tất cả và bắt đầu lại?")) {
+            return;
+        }
     }
-}
     this.setForm(new Categories()); 
     this.setEditable(false); 
 }

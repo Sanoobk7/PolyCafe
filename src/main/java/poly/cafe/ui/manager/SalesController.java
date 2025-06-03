@@ -6,8 +6,9 @@ package poly.cafe.ui.manager;
 
 /**
  *
- * @author Home
+ * @author PC
  */
-public interface DrinkManagementController {
-    
+public interface SalesController {
+ void open(); // tải và hiển thị thẻ lên cửa sổ bán hàng
+ void showBillJDialog(int cardId); // hiển thị cửa sổ chứa phiếu bán hàng hàng của 1 thẻ
 }

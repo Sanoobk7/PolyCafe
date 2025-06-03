@@ -13,6 +13,10 @@ public class XAuth {
         XAuth.user = user;
     }
 
+    public static Users getUser() {
+        return user;
+    }
+
     public static boolean isLoggedIn() {
         return user != null;
     }

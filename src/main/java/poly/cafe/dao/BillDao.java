@@ -10,5 +10,7 @@ import poly.cafe.entity.Bills;
 
 public interface BillDao extends CrudDAO<Bills, Long> {
     List<Bills> findByTimeRange(Date begin, Date end); // Bills với 's'
+    public Bills findServicingByCardId(Integer cardId);
+    List<Bills> findByUserAndTimeRange(String username, Date begin, Date end); 
 }
 

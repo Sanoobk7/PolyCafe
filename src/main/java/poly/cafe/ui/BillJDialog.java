@@ -29,6 +29,12 @@ import poly.cafe.util.XDialog;
 public class BillJDialog extends javax.swing.JDialog {
     private DefaultTableModel tableModel;
     private final Frame parentFrame;
+    
+     private Bills bill;
+
+public void setBill(Bills bill) {
+    this.bill = bill;
+}
 
     /**
      * Creates new form BillJDialog
