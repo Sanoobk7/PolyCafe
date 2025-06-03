@@ -205,7 +205,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/img/delete.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="b&#x1ecf; ch&#x1ecd;n t&#x1ea5;t c&#x1ea3;"/>
+                <Property name="text" type="java.lang.String" value="B&#x1ecf; ch&#x1ecd;n t&#x1ea5;t c&#x1ea3;"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnBoChonTatCaActionPerformed"/>
@@ -578,7 +578,7 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="ho&#xe0;n th&#xe0;nh"/>
+                <Property name="text" type="java.lang.String" value="Ho&#xe0;n th&#xe0;nh"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JRadioButton" name="rdoDaHuy">
@@ -586,7 +586,7 @@
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="buttonGroup1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="&#x111;&#xe3; h&#x1ee7;y"/>
+                <Property name="text" type="java.lang.String" value="&#x110;&#xe3; h&#x1ee7;y"/>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane2">

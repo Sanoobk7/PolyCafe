@@ -350,7 +350,7 @@ public void xoaCacDongDaChon() {
         });
 
         BtnBoChonTatCa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete.png"))); // NOI18N
-        BtnBoChonTatCa.setText("bỏ chọn tất cả");
+        BtnBoChonTatCa.setText("Bỏ chọn tất cả");
         BtnBoChonTatCa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnBoChonTatCaActionPerformed(evt);
@@ -404,7 +404,7 @@ public void xoaCacDongDaChon() {
         rdoLoi.setText("Lỗi");
 
         buttonGroup1.add(rdoThatBai);
-        rdoThatBai.setText("thất bại");
+        rdoThatBai.setText("Thất bại");
 
         jPanel3.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 

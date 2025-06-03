@@ -169,7 +169,7 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="BtnTheDinhDanh">
           <Properties>
-            <Property name="text" type="java.lang.String" value="th&#x1ebb; &#x111;&#x1ecb;nh danh"/>
+            <Property name="text" type="java.lang.String" value="Th&#x1ebb; &#x111;&#x1ecb;nh danh"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnTheDinhDanhActionPerformed"/>
@@ -221,7 +221,7 @@
         </Component>
         <Component class="javax.swing.JButton" name="BtnDoanhThu">
           <Properties>
-            <Property name="text" type="java.lang.String" value="doanh thu"/>
+            <Property name="text" type="java.lang.String" value="Doanh thu"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnDoanhThuActionPerformed"/>

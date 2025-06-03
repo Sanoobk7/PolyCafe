@@ -169,7 +169,7 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        BtnTheDinhDanh.setText("thẻ định danh");
+        BtnTheDinhDanh.setText("Thẻ định danh");
         BtnTheDinhDanh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnTheDinhDanhActionPerformed(evt);
@@ -201,7 +201,7 @@ public class PolyCafeJFrame extends javax.swing.JFrame {
         });
         jPanel1.add(BtnNguoiSuDung, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 390, 250, 79));
 
-        BtnDoanhThu.setText("doanh thu");
+        BtnDoanhThu.setText("Doanh thu");
         BtnDoanhThu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnDoanhThuActionPerformed(evt);

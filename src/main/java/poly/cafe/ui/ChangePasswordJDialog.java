@@ -137,7 +137,7 @@ public class ChangePasswordJDialog extends javax.swing.JDialog {
         jLabel5.setText("Xác nhận mật khẩu mới");
 
         BtnDoiMatKhau.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/save.png"))); // NOI18N
-        BtnDoiMatKhau.setText("đổi mật khẩu");
+        BtnDoiMatKhau.setText("Đổi mật khẩu");
         BtnDoiMatKhau.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnDoiMatKhauActionPerformed(evt);
@@ -176,7 +176,7 @@ public class ChangePasswordJDialog extends javax.swing.JDialog {
                 .addComponent(BtnDoiMatKhau)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BtnDongJDIalogDoiMatKhau)
-                .addContainerGap(122, Short.MAX_VALUE))
+                .addContainerGap(121, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

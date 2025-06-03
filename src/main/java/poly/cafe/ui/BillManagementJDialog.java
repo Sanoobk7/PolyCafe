@@ -69,7 +69,7 @@ private void initComboBox() {
         // Xác định kiểu dữ liệu của từng cột (để hiển thị checkbox ở cột cuối)
         // Chỉ cho phép chỉnh sửa cột cuối cùng (checkbox "Chọn")
         //mấy cái này đều cần cái Dao.java hỗ trợ để làm cho dễ
-    tableModel = new DefaultTableModel(new String[]{"Mã phiếu", "thẻ số", "thời điểm tạo", "thời điểm thanh toán", "Trạng thái", "Người tạo", "Chọn"}, 0) {
+    tableModel = new DefaultTableModel(new String[]{"Mã phiếu", "Thẻ số", "Thời điểm tạo", "Thời điểm thanh toán", "Trạng thái", "Người tạo", "Chọn"}, 0) {
         Class<?>[] types = new Class<?>[]{String.class, String.class, String.class, String.class, String.class, String.class, Boolean.class};
         @Override
         public Class<?> getColumnClass(int columnIndex) {
@@ -618,7 +618,7 @@ private void Xoa() {
         });
 
         BtnBoChonTatCa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete.png"))); // NOI18N
-        BtnBoChonTatCa.setText("bỏ chọn tất cả");
+        BtnBoChonTatCa.setText("Bỏ chọn tất cả");
         BtnBoChonTatCa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnBoChonTatCaActionPerformed(evt);
@@ -839,10 +839,10 @@ private void Xoa() {
         rdoBaoTri.setText("Đang phục vụ");
 
         buttonGroup1.add(rdoHoanThanh);
-        rdoHoanThanh.setText("hoàn thành");
+        rdoHoanThanh.setText("Hoàn thành");
 
         buttonGroup1.add(rdoDaHuy);
-        rdoDaHuy.setText("đã hủy");
+        rdoDaHuy.setText("Đã hủy");
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

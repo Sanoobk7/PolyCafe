@@ -645,7 +645,7 @@ private void xoaCacDongDaChon() {
         });
 
         btnBoChonTatCa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/delete.png"))); // NOI18N
-        btnBoChonTatCa.setText("bỏ chọn tất cả");
+        btnBoChonTatCa.setText("Bỏ chọn tất cả");
         btnBoChonTatCa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnBoChonTatCaActionPerformed(evt);
@@ -816,7 +816,7 @@ private void xoaCacDongDaChon() {
 
         jLabel6.setText("Loại");
 
-        jLabel7.setText("trạng thái");
+        jLabel7.setText("Trạng thái");
 
         buttonGroup1.add(rdoSan);
         rdoSan.setText("Sẵn sàng");
