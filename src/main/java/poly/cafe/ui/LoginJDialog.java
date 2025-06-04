@@ -7,6 +7,7 @@ import poly.cafe.util.XAuth;
 import javax.swing.JOptionPane;
 import poly.cafe.entity.Users;
 import poly.cafe.dao.LoginDao;
+import poly.cafe.util.XDialog;
 import static poly.cafe.util.XAuth.user;
 /**
  *
@@ -53,6 +54,10 @@ public class LoginJDialog extends javax.swing.JDialog {
         }
 
         XAuth.user = user; // Gán người dùng vào XAuth
+        if(!user.isEnabled()) {
+        XDialog.alert("Tài khoản của bạn đã tạm dừng");
+        return;
+        }
         JOptionPane.showMessageDialog(this, "Đăng nhập thành công");
         PolyCafeJFrame frame = new PolyCafeJFrame();
         frame.setUserRole(dao.isManager(taikhoan));
