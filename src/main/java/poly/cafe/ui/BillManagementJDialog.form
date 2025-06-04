@@ -57,7 +57,7 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace pref="219" max="32767" attributes="0"/>
+                      <EmptySpace pref="241" max="32767" attributes="0"/>
                       <Component id="BtnChonTatCa" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="BtnBoChonTatCa" min="-2" max="-2" attributes="0"/>
@@ -216,7 +216,7 @@
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/img/trash.png"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="x&#xf3;a c&#xe1;c m&#x1ee5;c ch&#x1ecd;n"/>
+                <Property name="text" type="java.lang.String" value="X&#xf3;a c&#xe1;c m&#x1ee5;c ch&#x1ecd;n"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnXoaTatCaDaChonActionPerformed"/>

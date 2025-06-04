@@ -653,7 +653,7 @@ private void xoaCacDongDaChon() {
         });
 
         btnXoaDaChon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/trash.png"))); // NOI18N
-        btnXoaDaChon.setText("xóa các mục chọn");
+        btnXoaDaChon.setText("Xóa các mục chọn");
         btnXoaDaChon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnXoaDaChonActionPerformed(evt);
@@ -677,7 +677,7 @@ private void xoaCacDongDaChon() {
                 .addComponent(btnBoChonTatCa)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnXoaDaChon)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -942,7 +942,7 @@ private void xoaCacDongDaChon() {
                     .addComponent(lblPhotoPath, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Biểu mẫu", jPanel2);

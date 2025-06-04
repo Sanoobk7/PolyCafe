@@ -626,7 +626,7 @@ private void Xoa() {
         });
 
         BtnXoaTatCaDaChon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/trash.png"))); // NOI18N
-        BtnXoaTatCaDaChon.setText("xóa các mục chọn");
+        BtnXoaTatCaDaChon.setText("Xóa các mục chọn");
         BtnXoaTatCaDaChon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnXoaTatCaDaChonActionPerformed(evt);
@@ -657,7 +657,7 @@ private void Xoa() {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(219, Short.MAX_VALUE)
+                .addContainerGap(241, Short.MAX_VALUE)
                 .addComponent(BtnChonTatCa)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BtnBoChonTatCa)
