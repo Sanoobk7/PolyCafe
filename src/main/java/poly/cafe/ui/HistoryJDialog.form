@@ -93,11 +93,11 @@
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="5">
-            <StringItem index="0" value="N&#x103;m n&#xe0;y"/>
+            <StringItem index="0" value="H&#xf4;m nay"/>
             <StringItem index="1" value="Tu&#x1ea7;n n&#xe0;y"/>
             <StringItem index="2" value="Th&#xe1;ng n&#xe0;y"/>
             <StringItem index="3" value="Qu&#xfd; n&#xe0;y"/>
-            <StringItem index="4" value="H&#xf4;m nay"/>
+            <StringItem index="4" value="N&#x103;m nay"/>
           </StringArray>
         </Property>
       </Properties>

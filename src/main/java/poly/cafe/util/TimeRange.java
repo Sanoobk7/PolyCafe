@@ -2,7 +2,6 @@ package poly.cafe.util;
 
 import java.time.LocalDate;
 
-
 public class TimeRange {
 
     private LocalDate begin;
@@ -30,31 +29,35 @@ public class TimeRange {
     // Các phương thức tạo khoảng thời gian
     public static TimeRange today() {
         LocalDate now = LocalDate.now();
-        return new TimeRange(now, now.plusDays(1));
+        return new TimeRange(now, now);
     }
 
     public static TimeRange thisWeek() {
         LocalDate now = LocalDate.now();
         LocalDate begin = now.minusDays(now.getDayOfWeek().getValue() - 1);
-        return new TimeRange(begin, begin.plusDays(7));
+        LocalDate end = begin.plusDays(6);
+        return new TimeRange(begin, end);
     }
 
     public static TimeRange thisMonth() {
         LocalDate now = LocalDate.now();
         LocalDate begin = now.withDayOfMonth(1);
-        return new TimeRange(begin, begin.plusDays(now.lengthOfMonth()));
+        LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
+        return new TimeRange(begin, end);
     }
 
     public static TimeRange thisQuarter() {
         LocalDate now = LocalDate.now();
         int firstMonth = now.getMonth().firstMonthOfQuarter().getValue();
         LocalDate begin = now.withMonth(firstMonth).withDayOfMonth(1);
-        return new TimeRange(begin, begin.plusMonths(3));
+        LocalDate end = begin.plusMonths(2).withDayOfMonth(begin.plusMonths(2).lengthOfMonth());
+        return new TimeRange(begin, end);
     }
 
     public static TimeRange thisYear() {
         LocalDate now = LocalDate.now();
         LocalDate begin = now.withMonth(1).withDayOfMonth(1);
-        return new TimeRange(begin, begin.plusMonths(12));
+        LocalDate end = now.withMonth(12).withDayOfMonth(31);
+        return new TimeRange(begin, end);
     }
 }

@@ -71,7 +71,7 @@ public class HistoryJDialog extends javax.swing.JDialog implements HistoryContro
             }
         });
 
-        cboTimeRanges.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Năm này", "Tuần này", "Tháng này", "Quý này", "Hôm nay" }));
+        cboTimeRanges.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Hôm nay", "Tuần này", "Tháng này", "Quý này", "Năm nay" }));
         cboTimeRanges.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboTimeRangesActionPerformed(evt);
