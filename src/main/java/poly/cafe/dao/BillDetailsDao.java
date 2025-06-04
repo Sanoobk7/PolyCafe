@@ -124,4 +124,40 @@ public class BillDetailsDao {
         return false;
     }
 }
+      public List<Object[]> FindByBillDetail(long billId) {
+        String sql = "SELECT bd.Id, bd.BillId, bd.DrinkId, bd.UnitPrice, bd.Discount, bd.Quantity, d.Name AS DrinkName " +
+                     "FROM BillDetails bd " +
+                     "JOIN Drinks d ON bd.DrinkId = d.Id " +
+                     "WHERE bd.BillId = ?";
+        try (Connection con = DataConnection.open();
+             PreparedStatement pre = con.prepareStatement(sql)) {
+            pre.setLong(1, billId);
+            ResultSet rs = pre.executeQuery();
+            List<Object[]> list = new ArrayList<>();
+            while (rs.next()) {
+                BillDetails bd = new BillDetails();
+                bd.setId(rs.getLong("Id"));
+                bd.setBillId(rs.getLong("BillId"));
+                bd.setDrinkId(rs.getString("DrinkId"));
+                bd.setUnitPrice(rs.getDouble("UnitPrice"));
+                bd.setDiscount(rs.getDouble("Discount"));
+                bd.setQuantity(rs.getInt("Quantity"));
+                String drinkName = rs.getString("DrinkName");
+                // Tính thành tiền
+                double totalPrice = bd.getUnitPrice() * (1 - bd.getDiscount() / 100) * bd.getQuantity();
+                // Thêm vào danh sách với các cột cần thiết
+                list.add(new Object[]{
+                    drinkName,
+                    bd.getUnitPrice(),
+                    bd.getDiscount(),
+                    bd.getQuantity(),
+                    totalPrice
+                });
+            }
+            return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

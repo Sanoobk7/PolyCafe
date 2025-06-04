@@ -4,6 +4,7 @@
  */
 package poly.cafe.dao;
 
+import poly.cafe.entity.BillDetails;
 import poly.cafe.entity.Bills;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -98,6 +99,7 @@ public class BillsManagerDao {
     }
 
     // Find all bills
+
     public List<Bills> findAll() {
         String sql = "SELECT * FROM Bills";
         

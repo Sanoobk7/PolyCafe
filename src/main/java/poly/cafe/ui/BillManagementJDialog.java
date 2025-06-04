@@ -32,7 +32,11 @@ import poly.cafe.dao.DrinkDAO;
 import poly.cafe.dao.impl.DrinkDAOImpl;
 import poly.cafe.entity.BillDetails;
 import poly.cafe.entity.Drinks;
-
+import poly.cafe.dao.BillDetailsDao;
+import poly.cafe.dao.DrinkDAO;
+import poly.cafe.dao.impl.DrinkDAOImpl;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
 /**
  *
  * @author Home
@@ -49,13 +53,26 @@ public class BillManagementJDialog extends javax.swing.JDialog {
      * Creates new form ReceiptManagementJDialog
      */
     public BillManagementJDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
-        initComponents();
-        setLocationRelativeTo(null);
-        initTable1();
-        initComboBox();
-        loaddatatotable();
-    }
+    super(parent, modal);
+    initComponents();
+    setLocationRelativeTo(null);
+    initTable1();
+    initComboBox();
+    initTable2();
+    loaddatatotable();
+    // Thêm ListSelectionListener cho jTable
+    jTable.getSelectionModel().addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+        @Override
+        public void valueChanged(javax.swing.event.ListSelectionEvent e) {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = jTable.getSelectedRow();
+                if (selectedRow >= 0) {
+                    updateFormFromRow(selectedRow);
+                }
+            }
+        }
+    });
+}
 
     private void initComboBox() {
         cboThoiGian.setModel(new DefaultComboBoxModel<>(thoiGianOptions));
@@ -407,6 +424,9 @@ public class BillManagementJDialog extends javax.swing.JDialog {
             rdoBaoTri.setSelected("Đang phục vụ".equals(status));
             rdoHoanThanh.setSelected("Hoàn thành".equals(status));
             rdoDaHuy.setSelected("Đã hủy".equals(status));
+            
+            long billId = Long.parseLong(jTable.getValueAt(row, 0).toString());
+            loadBillDetailsToTable(billId);
         }
     }
 
@@ -562,6 +582,30 @@ public class BillManagementJDialog extends javax.swing.JDialog {
 //        JOptionPane.showMessageDialog(this, "Lỗi khi tải chi tiết hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
 //    }
 //}
+    private DefaultTableModel tableModel2; // Cho jTable2
+    private void initTable2() {
+    tableModel2 = new DefaultTableModel(new String[]{"Đồ uống", "Đơn giá", "Giảm giá", "Số lượng", "Thành tiền"}, 0);
+    jTable2.setModel(tableModel2);
+}private void loadBillDetailsToTable(long billId) {
+    tableModel2.setRowCount(0); // Xóa dữ liệu cũ trong jTable2
+    try {
+        BillDetailsDao billDetailsDao = new BillDetailsDao();
+        List<Object[]> details = billDetailsDao.FindByBillDetail(billId); // Sử dụng FindByBillDetail
+
+        if (details == null || details.isEmpty()) {
+            return; // Để trống nếu không có chi tiết
+        }
+
+        for (Object[] detail : details) {
+            tableModel2.addRow(detail); // Thêm trực tiếp vì FindByBillDetail trả về mảng đúng định dạng
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Lỗi khi tải chi tiết hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1098,7 +1142,7 @@ public class BillManagementJDialog extends javax.swing.JDialog {
                 String status;
                 switch (bill.getStatus()) {
                     case 0:
-                        status = "Đang bảo trì";
+                        status = "Đang phục vụ";
                         break;
                     case 1:
                         status = "Hoàn thành";
