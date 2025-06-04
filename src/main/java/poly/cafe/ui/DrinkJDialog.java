@@ -110,12 +110,14 @@ public class DrinkJDialog extends javax.swing.JDialog {
         }
         try {
             for (Drinks drink : list) {
-                drinkTableModel.addRow(new Object[]{
-                    drink.getId(),
-                    drink.getName(),
-                    drink.getUnitPrice(),
-                    drink.getDiscount()
-                });
+                if (drink.isAvailable()) { // Only add available drinks
+                    drinkTableModel.addRow(new Object[]{
+                        drink.getId(),
+                        drink.getName(),
+                        drink.getUnitPrice(),
+                        drink.getDiscount()
+                    });
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,34 +146,36 @@ public class DrinkJDialog extends javax.swing.JDialog {
     }
 
     private void filterDrinksByCategory(int row) {
-    if (row >= 0 && row < tblDrinks.getRowCount()) {
-        String categoryName = (String) tblDrinks.getValueAt(row, 0);
-        Categories category = dao.findCategoryByName(categoryName);
-        if (category != null) {
-            drinkTableModel.setRowCount(0); // Xóa dữ liệu cũ
-            List<Drinks> drinks = dao.findByCategoryId(category.getId());
-            if (drinks != null) {
-                try {
-                    for (Drinks drink : drinks) {
-                        String status = drink.isAvailable() ? "Sẵn sàng" : "Hết";
-                        drinkTableModel.addRow(new Object[]{
-                            drink.getId(),
-                            drink.getName(),
-                            drink.getUnitPrice(),
-                            drink.getDiscount(),
-                            status,
-                            categoryName,
-                            false // Checkbox mặc định
-                        });
+        if (row >= 0 && row < tblDrinks.getRowCount()) {
+            String categoryName = (String) tblDrinks.getValueAt(row, 0);
+            Categories category = dao.findCategoryByName(categoryName);
+            if (category != null) {
+                drinkTableModel.setRowCount(0); // Clear old data
+                List<Drinks> drinks = dao.findByCategoryId(category.getId());
+                if (drinks != null) {
+                    try {
+                        for (Drinks drink : drinks) {
+                            if (drink.isAvailable()) { // Only add available drinks
+                                String status = drink.isAvailable() ? "Sẵn sàng" : "Hết";
+                                drinkTableModel.addRow(new Object[]{
+                                    drink.getId(),
+                                    drink.getName(),
+                                    drink.getUnitPrice(),
+                                    drink.getDiscount(),
+                                    status,
+                                    categoryName,
+                                    false // Checkbox default
+                                });
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
     }
-}
 
     private void initTableSelectListener() {
         TableSelect.addMouseListener(new MouseAdapter() {
