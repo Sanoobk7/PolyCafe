@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package poly.cafe.ui;
+
 import java.sql.SQLException;
 import poly.cafe.entity.Bills;
 import poly.cafe.dao.BillDao;
@@ -31,16 +32,19 @@ import poly.cafe.dao.DrinkDAO;
 import poly.cafe.dao.impl.DrinkDAOImpl;
 import poly.cafe.entity.BillDetails;
 import poly.cafe.entity.Drinks;
+
 /**
  *
  * @author Home
  */
 public class BillManagementJDialog extends javax.swing.JDialog {
-DefaultTableModel tableModel;
-String[] thoiGianOptions = {"Hôm nay", "Tuần này", "Tháng này", "Năm nay", "Toàn thời gian"};
-BillsManagerDao dao = new BillsManagerDao();
+
+    DefaultTableModel tableModel;
+    String[] thoiGianOptions = {"Hôm nay", "Tuần này", "Tháng này", "Năm nay", "Toàn thời gian"};
+    BillsManagerDao dao = new BillsManagerDao();
 //private javax.swing.JComboBox<String> cboThoiGian;
 //JTable table;
+
     /**
      * Creates new form ReceiptManagementJDialog
      */
@@ -50,357 +54,367 @@ BillsManagerDao dao = new BillsManagerDao();
         setLocationRelativeTo(null);
         initTable1();
         initComboBox();
-        loaddatatotable();      
-    }
-
-private void initComboBox() {
-    cboThoiGian.setModel(new DefaultComboBoxModel<>(thoiGianOptions));
-    cboThoiGian.addActionListener(e -> loaddatatotable());
-    if (cboThoiGian.getItemCount() > 0) {
-        cboThoiGian.setSelectedItem("Toàn thời gian"); // Đặt "Toàn thời gian" làm mặc định
         loaddatatotable();
     }
-}
 
+    private void initComboBox() {
+        cboThoiGian.setModel(new DefaultComboBoxModel<>(thoiGianOptions));
+        cboThoiGian.addActionListener(e -> loaddatatotable());
+        if (cboThoiGian.getItemCount() > 0) {
+            cboThoiGian.setSelectedItem("Toàn thời gian"); // Đặt "Toàn thời gian" làm mặc định
+            loaddatatotable();
+        }
+    }
 
-     private void initTable1() {
+    private void initTable1() {
         // Thiết lập bảng jTable1 với các cột và kiểu dữ liệu tương ứng
         // Mỗi cột tương ứng với một kiểu dữ liệu
         // Xác định kiểu dữ liệu của từng cột (để hiển thị checkbox ở cột cuối)
         // Chỉ cho phép chỉnh sửa cột cuối cùng (checkbox "Chọn")
         //mấy cái này đều cần cái Dao.java hỗ trợ để làm cho dễ
-    tableModel = new DefaultTableModel(new String[]{"Mã phiếu", "Thẻ số", "Thời điểm tạo", "Thời điểm thanh toán", "Trạng thái", "Người tạo", "Chọn"}, 0) {
-        Class<?>[] types = new Class<?>[]{String.class, String.class, String.class, String.class, String.class, String.class, Boolean.class};
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return types[columnIndex];
-        }
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return column == 6;
-        }
-    };
-    jTable.setModel(tableModel);
-    // Gán mô hình dữ liệu cho bảng
-}
-      // Cập nhật mảng thoiGianOptions để thêm "Toàn thời gian"
+        tableModel = new DefaultTableModel(new String[]{"Mã phiếu", "Thẻ số", "Thời điểm tạo", "Thời điểm thanh toán", "Trạng thái", "Người tạo", "Chọn"}, 0) {
+            Class<?>[] types = new Class<?>[]{String.class, String.class, String.class, String.class, String.class, String.class, Boolean.class};
 
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 6;
+            }
+        };
+        jTable.setModel(tableModel);
+        // Gán mô hình dữ liệu cho bảng
+    }
+    // Cập nhật mảng thoiGianOptions để thêm "Toàn thời gian"
 
 // Cập nhật phương thức loaddatatotable để xử lý "Toàn thời gian"
-public void loaddatatotable() {
-    tableModel.setRowCount(0); // Xóa dữ liệu cũ
-    String selectedOption = (String) cboThoiGian.getSelectedItem();
-    if (selectedOption == null) {
-        return;
-    }
+    public void loaddatatotable() {
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        String selectedOption = (String) cboThoiGian.getSelectedItem();
+        if (selectedOption == null) {
+            return;
+        }
 
-    List<Bills> list;
-    if (selectedOption.equals("Toàn thời gian")) {
-        list = dao.findAll(); // Gọi findAll cho Toàn thời gian
-    } else {
-        list = dao.findByTimeFrame(selectedOption); // Gọi findByTimeFrame cho các mục khác
-    }
+        List<Bills> list;
+        if (selectedOption.equals("Toàn thời gian")) {
+            list = dao.findAll(); // Gọi findAll cho Toàn thời gian
+        } else {
+            list = dao.findByTimeFrame(selectedOption); // Gọi findByTimeFrame cho các mục khác
+        }
 
-    if (list == null || list.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Không có dữ liệu cho " + selectedOption.toLowerCase() + "!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-        return;
-    }
+        if (list == null || list.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không có dữ liệu cho " + selectedOption.toLowerCase() + "!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
 
-    try {
-        for (Bills bill : list) {
-            String status;
-            switch (bill.getStatus()) {
-                case 0:
-                    status = "Đang phục vụ";
-                    break;
-                case 1:
-                    status = "Hoàn thành";
-                    break;
-                case 2:
-                    status = "Đã hủy";
-                    break;
-                default:
-                    status = "Không xác định";
+        try {
+            for (Bills bill : list) {
+                String status;
+                switch (bill.getStatus()) {
+                    case 0:
+                        status = "Đang phục vụ";
+                        break;
+                    case 1:
+                        status = "Hoàn thành";
+                        break;
+                    case 2:
+                        status = "Đã hủy";
+                        break;
+                    default:
+                        status = "Không xác định";
+                }
+                tableModel.addRow(new Object[]{
+                    bill.getId(),
+                    bill.getCardId(),
+                    bill.getCheckin(),
+                    bill.getCheckout(),
+                    status,
+                    bill.getUsername(),
+                    false
+                });
             }
-            tableModel.addRow(new Object[]{
-                bill.getId(),
-                bill.getCardId(),
-                bill.getCheckin(),
-                bill.getCheckout(),
-                status,
-                bill.getUsername(),
-                false
-            });
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
-}
-      private void Them() {
-    BillsManagerDao dao = new BillsManagerDao();
-    AccountManagementDao userDao = new AccountManagementDao();
-    String username = txtNguoiTao.getText().trim();
-    String cardIdStr = txtTheSo.getText().trim();
-    String checkinStr = txtThoiDiemTao.getText().trim();
-    String checkoutStr = txtThoiDiemThanhToan.getText().trim();
-
-    // Validate required fields
-    if (username.isEmpty() || cardIdStr.isEmpty() || checkinStr.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin (Người tạo, Thẻ số, Thời điểm tạo)!");
-        return;
     }
 
-    // Validate Username exists in Users table
-    if (!userDao.checkUsernameExists(username)) {
-        JOptionPane.showMessageDialog(this, "Người tạo (Username) không tồn tại trong cơ sở dữ liệu!");
-        return;
-    }
+    private void Them() {
+        BillsManagerDao dao = new BillsManagerDao();
+        AccountManagementDao userDao = new AccountManagementDao();
+        String username = txtNguoiTao.getText().trim();
+        String cardIdStr = txtTheSo.getText().trim();
+        String checkinStr = txtThoiDiemTao.getText().trim();
+        String checkoutStr = txtThoiDiemThanhToan.getText().trim();
 
-    // Validate CardId (1-30 and exists in Cards table)
-    int cardId;
-    try {
-        cardId = Integer.parseInt(cardIdStr);
-        if (!dao.checkCardIdExists(cardId)) {
-            JOptionPane.showMessageDialog(this, "Thẻ số không tồn tại trong cơ sở dữ liệu!");
+        // Validate required fields
+        if (username.isEmpty() || cardIdStr.isEmpty() || checkinStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin (Người tạo, Thẻ số, Thời điểm tạo)!");
             return;
         }
-        
-        if (cardId < 1 || cardId > 30) {
-            JOptionPane.showMessageDialog(this, "Thẻ số phải nằm trong khoảng từ 1 đến 30!");
+
+        // Validate Username exists in Users table
+        if (!userDao.checkUsernameExists(username)) {
+            JOptionPane.showMessageDialog(this, "Người tạo (Username) không tồn tại trong cơ sở dữ liệu!");
             return;
         }
-        
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Thẻ số phải là số nguyên hợp lệ!");
-        return;
-    }
 
-    // Parse Checkin date
-    Date checkin;
-    try {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        checkin = sdf.parse(checkinStr);
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Thời điểm tạo phải có định dạng dd/MM/yyyy HH:mm!");
-        return;
-    }
+        // Validate CardId (1-30 and exists in Cards table)
+        int cardId;
+        try {
+            cardId = Integer.parseInt(cardIdStr);
+            if (!dao.checkCardIdExists(cardId)) {
+                JOptionPane.showMessageDialog(this, "Thẻ số không tồn tại trong cơ sở dữ liệu!");
+                return;
+            }
 
-    // Parse Checkout date (nullable)
-    Date checkout = null;
-    if (!checkoutStr.isEmpty()) {
+            if (cardId < 1 || cardId > 30) {
+                JOptionPane.showMessageDialog(this, "Thẻ số phải nằm trong khoảng từ 1 đến 30!");
+                return;
+            }
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Thẻ số phải là số nguyên hợp lệ!");
+            return;
+        }
+
+        // Parse Checkin date
+        Date checkin;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            checkout = sdf.parse(checkoutStr);
+            checkin = sdf.parse(checkinStr);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Thời điểm thanh toán phải có định dạng dd/MM/yyyy HH:mm hoặc để trống!");
+            JOptionPane.showMessageDialog(this, "Thời điểm tạo phải có định dạng dd/MM/yyyy HH:mm!");
             return;
         }
-    }
 
-    // Determine Status
-    int status;
-    if (rdoBaoTri.isSelected()) {
-        status = 0; // Đang bảo trì
-    } else if (rdoHoanThanh.isSelected()) {
-        status = 1; // Hoàn thành
-    } else if (rdoDaHuy.isSelected()) {
-        status = 2; // Đã hủy
-    } else {
-        JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái (Đang bảo trì, Hoàn thành, hoặc Đã hủy)!");
-        return;
-    }
+        // Parse Checkout date (nullable)
+        Date checkout = null;
+        if (!checkoutStr.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                checkout = sdf.parse(checkoutStr);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Thời điểm thanh toán phải có định dạng dd/MM/yyyy HH:mm hoặc để trống!");
+                return;
+            }
+        }
 
-    // Create Bills object
-    Bills bill = new Bills();
-    bill.setUsername(username);
-    bill.setCardId(cardId);
-    bill.setCheckin(checkin);
-    bill.setCheckout(checkout);
-    bill.setStatus(status);
-
-    // Insert bill
-    try {
-        if (dao.insert(bill)) {
-            JOptionPane.showMessageDialog(this, "Thêm phiếu thành công!");
-            loaddatatotable();
+        // Determine Status
+        int status;
+        if (rdoBaoTri.isSelected()) {
+            status = 0; // Đang bảo trì
+        } else if (rdoHoanThanh.isSelected()) {
+            status = 1; // Hoàn thành
+        } else if (rdoDaHuy.isSelected()) {
+            status = 2; // Đã hủy
         } else {
-            JOptionPane.showMessageDialog(this, "Thêm phiếu thất bại!");
-        }
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Lỗi khi thêm hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
-}
-
-private void Sua() {
-    BillsManagerDao dao = new BillsManagerDao();
-    AccountManagementDao userDao = new AccountManagementDao();
-    String maPhieuStr = txtMaPhieu.getText().trim();
-    String username = txtNguoiTao.getText().trim();
-    String cardIdStr = txtTheSo.getText().trim();
-    String checkinStr = txtThoiDiemTao.getText().trim();
-    String checkoutStr = txtThoiDiemThanhToan.getText().trim();
-
-    // Validate required fields
-    if (maPhieuStr.isEmpty() || username.isEmpty() || cardIdStr.isEmpty() || checkinStr.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin (Mã phiếu, Người tạo, Thẻ số, Thời điểm tạo)!");
-        return;
-    }
-
-    // Parse MaPhieu
-    long maPhieu;
-    try {
-        maPhieu = Long.parseLong(maPhieuStr);
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Mã phiếu phải là số hợp lệ!");
-        return;
-    }
-
-    // Validate BillId exists
-    if (!dao.checkBillExists(maPhieu)) {
-        JOptionPane.showMessageDialog(this, "Mã phiếu không tồn tại trong cơ sở dữ liệu!");
-        return;
-    }
-
-    // Validate Username exists
-    if (!userDao.checkUsernameExists(username)) {
-        JOptionPane.showMessageDialog(this, "Người tạo (Username) không tồn tại trong cơ sở dữ liệu!");
-        return;
-    }
-
-    // Validate CardId (1-30 and exists in Cards table)
-    int cardId;
-    try {
-        cardId = Integer.parseInt(cardIdStr);
-        if (cardId < 1 || cardId > 30) {
-            JOptionPane.showMessageDialog(this, "Thẻ số phải nằm trong khoảng từ 1 đến 30!");
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái (Đang bảo trì, Hoàn thành, hoặc Đã hủy)!");
             return;
         }
-        if (!dao.checkCardIdExists(cardId)) {
-            JOptionPane.showMessageDialog(this, "Thẻ số không tồn tại trong cơ sở dữ liệu!");
-            return;
-        }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Thẻ số phải là số nguyên hợp lệ!");
-        return;
-    }
 
-    // Parse Checkin date
-    Date checkin;
-    try {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-        checkin = sdf.parse(checkinStr);
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Thời điểm tạo phải có định dạng dd/MM/yyyy HH:mm!");
-        return;
-    }
+        // Create Bills object
+        Bills bill = new Bills();
+        bill.setUsername(username);
+        bill.setCardId(cardId);
+        bill.setCheckin(checkin);
+        bill.setCheckout(checkout);
+        bill.setStatus(status);
 
-    // Parse Checkout date (nullable)
-    Date checkout = null;
-    if (!checkoutStr.isEmpty()) {
+        // Insert bill
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            checkout = sdf.parse(checkoutStr);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Thời điểm thanh toán phải có định dạng dd/MM/yyyy HH:mm hoặc để trống!");
-            return;
-        }
-    }
-
-    // Determine Status
-    int status;
-    if (rdoBaoTri.isSelected()) {
-        status = 0; // Đang bảo trì
-    } else if (rdoHoanThanh.isSelected()) {
-        status = 1; // Hoàn thành
-    } else if (rdoDaHuy.isSelected()) {
-        status = 2; // Đã hủy
-    } else {
-        JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái (Đang bảo trì, Hoàn thành, hoặc Đã hủy)!");
-        return;
-    }
-
-    // Create Bills object
-    Bills bill = new Bills();
-    bill.setId(maPhieu);
-    bill.setUsername(username);
-    bill.setCardId(cardId);
-    bill.setCheckin(checkin);
-    bill.setCheckout(checkout);
-    bill.setStatus(status);
-
-    // Update bill
-    try {
-        if (dao.update(bill)) {
-            JOptionPane.showMessageDialog(this, "Cập nhật phiếu thành công!");
-            loaddatatotable();
-        } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật phiếu thất bại!");
-        }
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
-}
-
-private void Xoa() {
-    String maPhieuStr = txtMaPhieu.getText().trim();
-    if (maPhieuStr.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã phiếu!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    long maPhieu;
-    try {
-        maPhieu = Long.parseLong(maPhieuStr);
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Mã phiếu phải là số hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    BillsManagerDao dao = new BillsManagerDao();
-    // Kiểm tra xem BillId có tồn tại không
-    if (!dao.checkBillExists(maPhieu)) {
-        JOptionPane.showMessageDialog(this, "Mã phiếu không tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    int confirm = JOptionPane.showConfirmDialog(this,
-            "Bạn có chắc muốn xóa Phiếu với mã: " + maPhieu + "?",
-            "Xác nhận",
-            JOptionPane.YES_NO_OPTION);
-
-    if (confirm == JOptionPane.YES_OPTION) {
-        try {
-            if (dao.deleteById(maPhieu)) {
-                JOptionPane.showMessageDialog(this, "Xóa thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            if (dao.insert(bill)) {
+                JOptionPane.showMessageDialog(this, "Thêm phiếu thành công!");
                 loaddatatotable();
             } else {
-                JOptionPane.showMessageDialog(this, "Xóa thất bại! Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Thêm phiếu thất bại!");
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi xóa hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Lỗi khi thêm hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
-}
-     private void updateFormFromRow(int row) {
-        if (row >= 0 && row < jTable.getRowCount()) {
-            txtMaPhieu.setText(String.valueOf(jTable.getValueAt(row, 0))); // Id
-            txtNguoiTao.setText((String) jTable.getValueAt(row, 1)); // Username
-            txtTheSo.setText(String.valueOf(jTable.getValueAt(row, 2))); // CardId
 
-            // Format Checkin and Checkout
+    private void Sua() {
+        BillsManagerDao dao = new BillsManagerDao();
+        AccountManagementDao userDao = new AccountManagementDao();
+        String maPhieuStr = txtMaPhieu.getText().trim();
+        String username = txtNguoiTao.getText().trim();
+        String cardIdStr = txtTheSo.getText().trim();
+        String checkinStr = txtThoiDiemTao.getText().trim();
+        String checkoutStr = txtThoiDiemThanhToan.getText().trim();
+
+        // Validate required fields
+        if (maPhieuStr.isEmpty() || username.isEmpty() || cardIdStr.isEmpty() || checkinStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin (Mã phiếu, Người tạo, Thẻ số, Thời điểm tạo)!");
+            return;
+        }
+
+        // Parse MaPhieu
+        long maPhieu;
+        try {
+            maPhieu = Long.parseLong(maPhieuStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Mã phiếu phải là số hợp lệ!");
+            return;
+        }
+
+        // Validate BillId exists
+        if (!dao.checkBillExists(maPhieu)) {
+            JOptionPane.showMessageDialog(this, "Mã phiếu không tồn tại trong cơ sở dữ liệu!");
+            return;
+        }
+
+        // Validate Username exists
+        if (!userDao.checkUsernameExists(username)) {
+            JOptionPane.showMessageDialog(this, "Người tạo (Username) không tồn tại trong cơ sở dữ liệu!");
+            return;
+        }
+
+        // Validate CardId (1-30 and exists in Cards table)
+        int cardId;
+        try {
+            cardId = Integer.parseInt(cardIdStr);
+            if (cardId < 1 || cardId > 30) {
+                JOptionPane.showMessageDialog(this, "Thẻ số phải nằm trong khoảng từ 1 đến 30!");
+                return;
+            }
+            if (!dao.checkCardIdExists(cardId)) {
+                JOptionPane.showMessageDialog(this, "Thẻ số không tồn tại trong cơ sở dữ liệu!");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Thẻ số phải là số nguyên hợp lệ!");
+            return;
+        }
+
+        // Parse Checkin date
+        Date checkin;
+        try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            Object checkin = jTable.getValueAt(row, 3); // Checkin
-            txtThoiDiemTao.setText(checkin != null ? sdf.format((Date) checkin) : "");
-            Object checkout = jTable.getValueAt(row, 4); // Checkout
-            txtThoiDiemThanhToan.setText(checkout != null && !"N/A".equals(checkout) ? sdf.format((Date) checkout) : "");
+            checkin = sdf.parse(checkinStr);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Thời điểm tạo phải có định dạng dd/MM/yyyy HH:mm!");
+            return;
+        }
 
-            // Set Status radio buttons
-            String status = (String) jTable.getValueAt(row, 5); // Status
-            rdoBaoTri.setSelected("Đang bảo trì".equals(status));
+        // Parse Checkout date (nullable)
+        Date checkout = null;
+        if (!checkoutStr.isEmpty()) {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                checkout = sdf.parse(checkoutStr);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Thời điểm thanh toán phải có định dạng dd/MM/yyyy HH:mm hoặc để trống!");
+                return;
+            }
+        }
+
+        // Determine Status
+        int status;
+        if (rdoBaoTri.isSelected()) {
+            status = 0; // Đang bảo trì
+        } else if (rdoHoanThanh.isSelected()) {
+            status = 1; // Hoàn thành
+        } else if (rdoDaHuy.isSelected()) {
+            status = 2; // Đã hủy
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái (Đang bảo trì, Hoàn thành, hoặc Đã hủy)!");
+            return;
+        }
+
+        // Create Bills object
+        Bills bill = new Bills();
+        bill.setId(maPhieu);
+        bill.setUsername(username);
+        bill.setCardId(cardId);
+        bill.setCheckin(checkin);
+        bill.setCheckout(checkout);
+        bill.setStatus(status);
+
+        // Update bill
+        try {
+            if (dao.update(bill)) {
+                JOptionPane.showMessageDialog(this, "Cập nhật phiếu thành công!");
+                loaddatatotable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Cập nhật phiếu thất bại!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void Xoa() {
+        String maPhieuStr = txtMaPhieu.getText().trim();
+        if (maPhieuStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã phiếu!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        long maPhieu;
+        try {
+            maPhieu = Long.parseLong(maPhieuStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Mã phiếu phải là số hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        BillsManagerDao dao = new BillsManagerDao();
+        // Kiểm tra xem BillId có tồn tại không
+        if (!dao.checkBillExists(maPhieu)) {
+            JOptionPane.showMessageDialog(this, "Mã phiếu không tồn tại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Bạn có chắc muốn xóa Phiếu với mã: " + maPhieu + "?",
+                "Xác nhận",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                if (dao.deleteById(maPhieu)) {
+                    JOptionPane.showMessageDialog(this, "Xóa thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    loaddatatotable();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Xóa thất bại! Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi xóa hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void updateFormFromRow(int row) {
+        if (row >= 0 && row < jTable.getRowCount()) {
+            txtMaPhieu.setText(String.valueOf(jTable.getValueAt(row, 0))); // Id: có thể là Long/Integer
+            txtTheSo.setText(String.valueOf(jTable.getValueAt(row, 1)));   // CardId: có thể là Integer
+
+            // Cập nhật các trường ngày giờ
+            Object checkin = jTable.getValueAt(row, 2); // Checkin
+            Object checkout = jTable.getValueAt(row, 3); // Checkout
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            txtThoiDiemTao.setText(checkin != null ? sdf.format(checkin) : "");
+            txtThoiDiemThanhToan.setText(checkout != null && !"N/A".equals(checkout) ? sdf.format(checkout) : "");
+
+            // Trạng thái và Người tạo thường là String
+            String status = String.valueOf(jTable.getValueAt(row, 4));
+            txtNguoiTao.setText(String.valueOf(jTable.getValueAt(row, 5)));
+
+            rdoBaoTri.setSelected("Đang phục vụ".equals(status));
             rdoHoanThanh.setSelected("Hoàn thành".equals(status));
             rdoDaHuy.setSelected("Đã hủy".equals(status));
         }
+    }
+
+    public void setEditable(boolean editable) {
+        txtMaPhieu.setEnabled(!editable); // hoặc txtId, tùy tên trường
+        BtnThem.setEnabled(!editable);
+        BtnCapNhap.setEnabled(editable);
+        BtnXoa.setEnabled(editable);
     }
 
     public void firstRow() {
@@ -408,6 +422,7 @@ private void Xoa() {
             jTable.setRowSelectionInterval(0, 0);
             jTable.scrollRectToVisible(jTable.getCellRect(0, 0, true));
             updateFormFromRow(0);
+            setEditable(true);
         }
     }
 
@@ -417,26 +432,41 @@ private void Xoa() {
             jTable.setRowSelectionInterval(lastIndex, lastIndex);
             jTable.scrollRectToVisible(jTable.getCellRect(lastIndex, 0, true));
             updateFormFromRow(lastIndex);
+            setEditable(true);
         }
     }
 
     public void nextRow() {
+        if (jTable.getRowCount() == 0) {
+            return;
+        }
         int current = jTable.getSelectedRow();
+        if (current == -1) {
+            current = 0;
+        }
         int next = current + 1;
         if (next < jTable.getRowCount()) {
             jTable.setRowSelectionInterval(next, next);
             jTable.scrollRectToVisible(jTable.getCellRect(next, 0, true));
             updateFormFromRow(next);
+            setEditable(true);
         }
     }
 
     public void backRow() {
+        if (jTable.getRowCount() == 0) {
+            return;
+        }
         int current = jTable.getSelectedRow();
+        if (current == -1) {
+            current = 0;
+        }
         int back = current - 1;
         if (back >= 0) {
             jTable.setRowSelectionInterval(back, back);
             jTable.scrollRectToVisible(jTable.getCellRect(back, 0, true));
             updateFormFromRow(back);
+            setEditable(true);
         }
     }
 
@@ -470,13 +500,13 @@ private void Xoa() {
 
         if (count > 0) {
             JOptionPane.showMessageDialog(this,
-                "Đã xóa thành công " + count + " phiếu:\n" + sb.toString(),
-                "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    "Đã xóa thành công " + count + " phiếu:\n" + sb.toString(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             loaddatatotable(); // Refresh table
         } else {
             JOptionPane.showMessageDialog(this,
-                "Không có dòng nào được chọn để xóa.",
-                "Thông báo", JOptionPane.WARNING_MESSAGE);
+                    "Không có dòng nào được chọn để xóa.",
+                    "Thông báo", JOptionPane.WARNING_MESSAGE);
         }
     }
 //    public void init() {
@@ -532,7 +562,6 @@ private void Xoa() {
 //        JOptionPane.showMessageDialog(this, "Lỗi khi tải chi tiết hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
 //    }
 //}
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -978,7 +1007,7 @@ private void Xoa() {
     }//GEN-LAST:event_BtnLamMoiActionPerformed
 
     private void BtnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBackActionPerformed
-       backRow();
+        backRow();
     }//GEN-LAST:event_BtnBackActionPerformed
 
     private void BtnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnNextActionPerformed
@@ -998,102 +1027,102 @@ private void Xoa() {
     }//GEN-LAST:event_BtnBoChonTatCaActionPerformed
 
     private void BtnXoaTatCaDaChonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnXoaTatCaDaChonActionPerformed
-       xoaCacDongDaChon();
+        xoaCacDongDaChon();
     }//GEN-LAST:event_BtnXoaTatCaDaChonActionPerformed
 
     private void cboThoiGianActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboThoiGianActionPerformed
-String[] thoiGianOptions = {"Năm nay", "Tháng này", "Tuần này", "Hôm nay"};
-String selected = cboThoiGian.getSelectedItem() != null ? cboThoiGian.getSelectedItem().toString() : "";
-BillsManagerDao dao = new BillsManagerDao();
-List<Bills> list = new ArrayList<>();
+        String[] thoiGianOptions = {"Năm nay", "Tháng này", "Tuần này", "Hôm nay"};
+        String selected = cboThoiGian.getSelectedItem() != null ? cboThoiGian.getSelectedItem().toString() : "";
+        BillsManagerDao dao = new BillsManagerDao();
+        List<Bills> list = new ArrayList<>();
 
-try {
-    switch (selected) {
-        case "Hôm nay":
-            list = dao.findToday();
-            break;
-        case "Tuần này":
-            list = dao.findThisWeek();
-            break;
-        case "Tháng này":
-            list = dao.findThisMonth();
-            break;
-        case "Năm nay":
-            list = dao.findThisYear();
-            break;
-        default:
-            list = dao.findAll();
-            break;
-    }
-    tableModel.setRowCount(0);
-    loaddatatotable();
-} catch (Exception e) {
-    e.printStackTrace();
-    JOptionPane.showMessageDialog(null, "Error loading bills: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-}
+        try {
+            switch (selected) {
+                case "Hôm nay":
+                    list = dao.findToday();
+                    break;
+                case "Tuần này":
+                    list = dao.findThisWeek();
+                    break;
+                case "Tháng này":
+                    list = dao.findThisMonth();
+                    break;
+                case "Năm nay":
+                    list = dao.findThisYear();
+                    break;
+                default:
+                    list = dao.findAll();
+                    break;
+            }
+            tableModel.setRowCount(0);
+            loaddatatotable();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error loading bills: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_cboThoiGianActionPerformed
 
     private void BtnLocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLocActionPerformed
         String fromDateStr = txtTuNgay.getText().trim();
-    String toDateStr = txtDenNgay.getText().trim();
+        String toDateStr = txtDenNgay.getText().trim();
 
-    if (fromDateStr.isEmpty() || toDateStr.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập cả Từ ngày và Đến ngày!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    Date fromDate, toDate;
-    try {
-        fromDate = sdf.parse(fromDateStr);
-        toDate = sdf.parse(toDateStr);
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Ngày phải có định dạng dd/MM/yyyy!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    if (toDate.before(fromDate)) {
-        JOptionPane.showMessageDialog(this, "Đến ngày phải sau Từ ngày!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    List<Bills> list = dao.findByDateRange(fromDate, toDate);
-    tableModel.setRowCount(0); // Xóa dữ liệu cũ
-    if (list == null || list.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Không có dữ liệu cho khoảng thời gian từ " + fromDateStr + " đến " + toDateStr + "!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-        return;
-    }
-
-    try {
-        for (Bills bill : list) {
-            String status;
-            switch (bill.getStatus()) {
-                case 0:
-                    status = "Đang bảo trì";
-                    break;
-                case 1:
-                    status = "Hoàn thành";
-                    break;
-                case 2:
-                    status = "Đã hủy";
-                    break;
-                default:
-                    status = "Không xác định";
-            }
-            tableModel.addRow(new Object[]{
-                bill.getId(),
-                bill.getCardId(),
-                bill.getCheckin(),
-                bill.getCheckout(),
-                status,
-                bill.getUsername(),
-                false
-            });
+        if (fromDateStr.isEmpty() || toDateStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập cả Từ ngày và Đến ngày!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date fromDate, toDate;
+        try {
+            fromDate = sdf.parse(fromDateStr);
+            toDate = sdf.parse(toDateStr);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Ngày phải có định dạng dd/MM/yyyy!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (toDate.before(fromDate)) {
+            JOptionPane.showMessageDialog(this, "Đến ngày phải sau Từ ngày!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        List<Bills> list = dao.findByDateRange(fromDate, toDate);
+        tableModel.setRowCount(0); // Xóa dữ liệu cũ
+        if (list == null || list.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không có dữ liệu cho khoảng thời gian từ " + fromDateStr + " đến " + toDateStr + "!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        try {
+            for (Bills bill : list) {
+                String status;
+                switch (bill.getStatus()) {
+                    case 0:
+                        status = "Đang bảo trì";
+                        break;
+                    case 1:
+                        status = "Hoàn thành";
+                        break;
+                    case 2:
+                        status = "Đã hủy";
+                        break;
+                    default:
+                        status = "Không xác định";
+                }
+                tableModel.addRow(new Object[]{
+                    bill.getId(),
+                    bill.getCardId(),
+                    bill.getCheckin(),
+                    bill.getCheckout(),
+                    status,
+                    bill.getUsername(),
+                    false
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_BtnLocActionPerformed
 
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked

@@ -41,17 +41,16 @@ import java.awt.Color;
  *
  * @author Home
  */
-public class DrinkManagementJDialog extends javax.swing.JDialog{
-DefaultTableModel drinkTableModel;
-DefaultTableModel categoryTableModel;
-DrinkManagementDao dao = new DrinkManagementDao();
-private String photoPath = "";
+public class DrinkManagementJDialog extends javax.swing.JDialog {
+
+    DefaultTableModel drinkTableModel;
+    DefaultTableModel categoryTableModel;
+    DrinkManagementDao dao = new DrinkManagementDao();
+    private String photoPath = "";
+
     /**
      * Creates new form BeverageManagementJDialog
      */
-    
-   
-    
     public DrinkManagementJDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -65,72 +64,75 @@ private String photoPath = "";
         styleCategoryTable();
         LamMoi();
     }
+
     private void filterDrinksByCategory(int row) {
-    if (row >= 0 && row < tblDrinks.getRowCount()) {
-        String categoryName = (String) tblDrinks.getValueAt(row, 0);
-        Categories category = dao.findCategoryByName(categoryName);
-        if (category != null) {
-            drinkTableModel.setRowCount(0); // Xóa dữ liệu cũ
-            List<Drinks> drinks = dao.findByCategoryId(category.getId());
-            if (drinks != null) {
-                try {
-                    for (Drinks drink : drinks) {
-                        String status = drink.isAvailable() ? "Sẵn sàng" : "Hết";
-                        drinkTableModel.addRow(new Object[]{
-                            drink.getId(),
-                            drink.getName(),
-                            drink.getUnitPrice(),
-                            drink.getDiscount(),
-                            status,
-                            categoryName,
-                            false // Checkbox mặc định
-                        });
+        if (row >= 0 && row < tblDrinks.getRowCount()) {
+            String categoryName = (String) tblDrinks.getValueAt(row, 0);
+            Categories category = dao.findCategoryByName(categoryName);
+            if (category != null) {
+                drinkTableModel.setRowCount(0); // Xóa dữ liệu cũ
+                List<Drinks> drinks = dao.findByCategoryId(category.getId());
+                if (drinks != null) {
+                    try {
+                        for (Drinks drink : drinks) {
+                            String status = drink.isAvailable() ? "Sẵn sàng" : "Hết";
+                            drinkTableModel.addRow(new Object[]{
+                                drink.getId(),
+                                drink.getName(),
+                                drink.getUnitPrice(),
+                                drink.getDiscount(),
+                                status,
+                                categoryName,
+                                false // Checkbox mặc định
+                            });
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
     }
-}
+
     private void styleCategoryTable() {
-    tblDrinks.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            c.setFont(c.getFont().deriveFont(java.awt.Font.BOLD)); // Đặt chữ in đậm
-            if (isSelected) {
-                c.setForeground(Color.RED); // Chữ đỏ khi chọn
-            } else {
-                c.setForeground(Color.BLUE); // Chữ xanh dương khi không chọn
+        tblDrinks.setDefaultRenderer(Object.class, new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                c.setFont(c.getFont().deriveFont(java.awt.Font.BOLD)); // Đặt chữ in đậm
+                if (isSelected) {
+                    c.setForeground(Color.RED); // Chữ đỏ khi chọn
+                } else {
+                    c.setForeground(Color.BLUE); // Chữ xanh dương khi không chọn
+                }
+                return c;
             }
-            return c;
-        }
-    });
-}
+        });
+    }
 
-   private void initDrinkTable() {
-    drinkTableModel = new DefaultTableModel(
-        new String[]{"Mã đồ uống", "Tên đồ uống", "Đơn giá", "Giảm giá", "Trạng thái", "Loại", "Chọn"}, 0
-    ) {
-        Class<?>[] types = new Class<?>[]{String.class, String.class, Double.class, Double.class, String.class, String.class, Boolean.class};
+    private void initDrinkTable() {
+        drinkTableModel = new DefaultTableModel(
+                new String[]{"Mã đồ uống", "Tên đồ uống", "Đơn giá", "Giảm giá", "Trạng thái", "Loại", "Chọn"}, 0
+        ) {
+            Class<?>[] types = new Class<?>[]{String.class, String.class, Double.class, Double.class, String.class, String.class, Boolean.class};
 
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return types[columnIndex];
-        }
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
 
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return column == 6; // Chỉ cột "Chọn" (checkbox) được chỉnh sửa
-        }
-    };
-    jTable2.setModel(drinkTableModel);
-}
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 6; // Chỉ cột "Chọn" (checkbox) được chỉnh sửa
+            }
+        };
+        jTable2.setModel(drinkTableModel);
+    }
+
     private void initCategoryTable() {
         categoryTableModel = new DefaultTableModel(
-            new String[]{"Tên loại đồ uống"}, 0
+                new String[]{"Tên loại đồ uống"}, 0
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -139,6 +141,7 @@ private String photoPath = "";
         };
         tblDrinks.setModel(categoryTableModel);
     }
+
     private void initComboBox() {
         List<Categories> categories = dao.findAllCategories();
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
@@ -150,6 +153,7 @@ private String photoPath = "";
             cboLoai.setSelectedIndex(0);
         }
     }
+
     private void initSlider() {
         sldGiamGia.setMinimum(0);
         sldGiamGia.setMaximum(100);
@@ -159,91 +163,96 @@ private String photoPath = "";
             txtPhanTram.setText(value + "%");
         });
     }
-   private void loadDrinkDataToTable() {
-    drinkTableModel.setRowCount(0);
-    List<Drinks> list = dao.findAll();
-    if (list == null || list.isEmpty()) {
-        return;
-    }
 
-    try {
-        for (Drinks drink : list) {
-            String status = drink.isAvailable() ? "Sẵn sàng" : "Hết";
-            Categories category = dao.findCategoryById(drink.getCategoryId());
-            String categoryName = category != null ? category.getName() : "N/A";
-            drinkTableModel.addRow(new Object[]{
-                drink.getId(),
-                drink.getName(),
-                drink.getUnitPrice(),
-                drink.getDiscount(),
-                status,
-                categoryName,
-                false // Giá trị mặc định cho checkbox
-            });
+    private void loadDrinkDataToTable() {
+        drinkTableModel.setRowCount(0);
+        List<Drinks> list = dao.findAll();
+        if (list == null || list.isEmpty()) {
+            return;
         }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
-}
-   private void chonTatCa() {
-    for (int row = 0; row < jTable2.getRowCount(); row++) {
-        jTable2.setValueAt(true, row, 6); // Cột 7 là checkbox
-    }
-}
 
-private void boChonTatCa() {
-    for (int row = 0; row < jTable2.getRowCount(); row++) {
-        jTable2.setValueAt(false, row, 6); // Cột 7 là checkbox
+        try {
+            for (Drinks drink : list) {
+                String status = drink.isAvailable() ? "Sẵn sàng" : "Hết";
+                Categories category = dao.findCategoryById(drink.getCategoryId());
+                String categoryName = category != null ? category.getName() : "N/A";
+                drinkTableModel.addRow(new Object[]{
+                    drink.getId(),
+                    drink.getName(),
+                    drink.getUnitPrice(),
+                    drink.getDiscount(),
+                    status,
+                    categoryName,
+                    false // Giá trị mặc định cho checkbox
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
-}
 
-private void xoaCacDongDaChon() {
-    StringBuilder sb = new StringBuilder();
-    int count = 0;
+    private void chonTatCa() {
+        for (int row = 0; row < jTable2.getRowCount(); row++) {
+            jTable2.setValueAt(true, row, 6); // Cột 7 là checkbox
+        }
+    }
 
-    for (int i = 0; i < jTable2.getRowCount(); i++) {
-        Boolean checked = (Boolean) jTable2.getValueAt(i, 6); // Cột checkbox
-        if (checked != null && checked) {
-            String id = jTable2.getValueAt(i, 0).toString(); // Cột Id
-            if (dao.deleteById(id)) {
-                sb.append("- ").append(id).append("\n");
-                count++;
+    private void boChonTatCa() {
+        for (int row = 0; row < jTable2.getRowCount(); row++) {
+            jTable2.setValueAt(false, row, 6); // Cột 7 là checkbox
+        }
+    }
+
+    private void xoaCacDongDaChon() {
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+
+        for (int i = 0; i < jTable2.getRowCount(); i++) {
+            Boolean checked = (Boolean) jTable2.getValueAt(i, 6); // Cột checkbox
+            if (checked != null && checked) {
+                String id = jTable2.getValueAt(i, 0).toString(); // Cột Id
+                if (dao.deleteById(id)) {
+                    sb.append("- ").append(id).append("\n");
+                    count++;
+                }
             }
         }
+
+        if (count > 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Đã xóa thành công " + count + " đồ uống:\n" + sb.toString(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            loadDrinkDataToTable(); // Cập nhật lại bảng
+
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Không có dòng nào được chọn để xóa.",
+                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
-    if (count > 0) {
-        JOptionPane.showMessageDialog(this,
-            "Đã xóa thành công " + count + " đồ uống:\n" + sb.toString(),
-            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-        loadDrinkDataToTable(); // Cập nhật lại bảng
-        
-    } else {
-        JOptionPane.showMessageDialog(this,
-            "Không có dòng nào được chọn để xóa.",
-            "Thông báo", JOptionPane.WARNING_MESSAGE);
-    }}
     private void loadCategoryDataToTable() {
-    categoryTableModel.setRowCount(0);
-    List<Categories> list = dao.findAllCategories();
-    if (list == null || list.isEmpty()) {
-        return;
+        categoryTableModel.setRowCount(0);
+        List<Categories> list = dao.findAllCategories();
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+
+        try {
+            for (Categories category : list) {
+                categoryTableModel.addRow(new Object[]{category.getName()});
+            }
+            if (tblDrinks.getRowCount() > 0) {
+                tblDrinks.setRowSelectionInterval(0, 0); // Chọn dòng đầu tiên
+                filterDrinksByCategory(0); // Lọc đồ uống
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu loại đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    try {
-        for (Categories category : list) {
-            categoryTableModel.addRow(new Object[]{category.getName()});
-        }
-        if (tblDrinks.getRowCount() > 0) {
-            tblDrinks.setRowSelectionInterval(0, 0); // Chọn dòng đầu tiên
-            filterDrinksByCategory(0); // Lọc đồ uống
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu loại đồ uống: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
-}
     private void chonAnh() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(new FileNameExtensionFilter("Image files", "jpg", "png", "jpeg", "gif"));
@@ -326,7 +335,7 @@ private void xoaCacDongDaChon() {
             if (dao.insert(drink)) {
                 JOptionPane.showMessageDialog(this, "Thêm đồ uống thành công!");
                 loadDrinkDataToTable();
-                
+
             } else {
                 JOptionPane.showMessageDialog(this, "Thêm đồ uống thất bại!");
             }
@@ -405,7 +414,7 @@ private void xoaCacDongDaChon() {
             if (dao.update(drink)) {
                 JOptionPane.showMessageDialog(this, "Cập nhật đồ uống thành công!");
                 loadDrinkDataToTable();
-                
+
             } else {
                 JOptionPane.showMessageDialog(this, "Cập nhật đồ uống thất bại!");
             }
@@ -437,7 +446,7 @@ private void xoaCacDongDaChon() {
                 if (dao.deleteById(maDoUong)) {
                     JOptionPane.showMessageDialog(this, "Xóa thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                     loadDrinkDataToTable();
-                    
+
                 } else {
                     JOptionPane.showMessageDialog(this, "Xóa thất bại! Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
@@ -457,53 +466,64 @@ private void xoaCacDongDaChon() {
         buttonGroup1.clearSelection();
         loadDrinkDataToTable();
         lblPhotoPath.setIcon(new ImageIcon("C:\\Users\\Home\\Documents\\NetBeansProjects\\PolyCafe\\src\\main\\resources\\img\\catloveu.png"));
+        setEditable(false); // <-- Bổ sung
     }
 
     private void updateFormFromRow(int row) {
-    if (row >= 0 && row < jTable2.getRowCount()) {
-        txtMaDoUong.setText((String) jTable2.getValueAt(row, 0));
-        txtTenDoUong.setText((String) jTable2.getValueAt(row, 1));
-        txtDonGia.setText(String.valueOf(jTable2.getValueAt(row, 2)));
-        sldGiamGia.setValue((int) ((Double) jTable2.getValueAt(row, 3)).doubleValue());
-        txtPhanTram.setText(sldGiamGia.getValue() + "%");
-        String status = (String) jTable2.getValueAt(row, 4);
-        rdoSan.setSelected("Sẵn sàng".equals(status));
-        rdoHet.setSelected("Hết".equals(status));
+        if (row >= 0 && row < jTable2.getRowCount()) {
+            txtMaDoUong.setText((String) jTable2.getValueAt(row, 0));
+            txtTenDoUong.setText((String) jTable2.getValueAt(row, 1));
+            txtDonGia.setText(String.valueOf(jTable2.getValueAt(row, 2)));
+            sldGiamGia.setValue((int) ((Double) jTable2.getValueAt(row, 3)).doubleValue());
+            txtPhanTram.setText(sldGiamGia.getValue() + "%");
+            String status = (String) jTable2.getValueAt(row, 4);
+            rdoSan.setSelected("Sẵn sàng".equals(status));
+            rdoHet.setSelected("Hết".equals(status));
 
-        // Lấy CategoryId từ Drinks
-        Drinks drink = dao.findById((String) jTable2.getValueAt(row, 0));
-        if (drink != null) {
-            String categoryId = drink.getCategoryId();
-            // Kiểm tra CategoryId tồn tại
-            if (dao.checkCategoryExists(categoryId)) {
-                // Tìm và đặt item trong cboLoai
-                for (int i = 0; i < cboLoai.getItemCount(); i++) {
-                    if (cboLoai.getItemAt(i).startsWith(categoryId)) {
-                        cboLoai.setSelectedIndex(i);
-                        break;
+            // Lấy CategoryId từ Drinks
+            Drinks drink = dao.findById((String) jTable2.getValueAt(row, 0));
+            if (drink != null) {
+                String categoryId = drink.getCategoryId();
+                // Kiểm tra CategoryId tồn tại
+                if (dao.checkCategoryExists(categoryId)) {
+                    // Tìm và đặt item trong cboLoai
+                    for (int i = 0; i < cboLoai.getItemCount(); i++) {
+                        if (cboLoai.getItemAt(i).startsWith(categoryId)) {
+                            cboLoai.setSelectedIndex(i);
+                            break;
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "Loại đồ uống này đã bị xóa!",
+                            "Thông báo", JOptionPane.WARNING_MESSAGE);
+                    if (cboLoai.getItemCount() > 0) {
+                        cboLoai.setSelectedIndex(0); // Đặt về item đầu tiên
                     }
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, 
-                    "Loại đồ uống này đã bị xóa!", 
-                    "Thông báo", JOptionPane.WARNING_MESSAGE);
-                if (cboLoai.getItemCount() > 0) {
-                    cboLoai.setSelectedIndex(0); // Đặt về item đầu tiên
-                }
+                // Không load ảnh, chỉ đặt photoPath
+                photoPath = drink.getImage() != null ? drink.getImage() : "";
+                lblPhotoPath.setText(photoPath);
+                lblPhotoPath.setIcon(new ImageIcon("C:\\Users\\Home\\Documents\\NetBeansProjects\\PolyCafe\\src\\main\\resources\\img\\catloveu.png"));
             }
-            // Không load ảnh, chỉ đặt photoPath
-            photoPath = drink.getImage() != null ? drink.getImage() : "";
-            lblPhotoPath.setText(photoPath);
-            lblPhotoPath.setIcon(new ImageIcon("C:\\Users\\Home\\Documents\\NetBeansProjects\\PolyCafe\\src\\main\\resources\\img\\catloveu.png"));
         }
     }
-}
+
+    private void setEditable(boolean editMode) {
+        // Nếu editMode = true: đang chỉnh sửa, false: tạo mới
+        txtMaDoUong.setEnabled(!editMode);      // Không cho sửa mã khi edit
+        BtnThem.setEnabled(!editMode);          // Cho phép tạo mới khi không ở edit mode
+        BtnSua.setEnabled(editMode);            // Cho phép sửa khi edit mode
+        BtnXoa.setEnabled(editMode);            // Cho phép xóa khi edit mode
+        // Có thể bổ sung các trường khác nếu cần
+    }
 
     public void firstRow() {
         if (jTable2.getRowCount() > 0) {
             jTable2.setRowSelectionInterval(0, 0);
             jTable2.scrollRectToVisible(jTable2.getCellRect(0, 0, true));
             updateFormFromRow(0);
+            setEditable(true); // <-- Bổ sung
         }
     }
 
@@ -513,6 +533,7 @@ private void xoaCacDongDaChon() {
             jTable2.setRowSelectionInterval(lastIndex, lastIndex);
             jTable2.scrollRectToVisible(jTable2.getCellRect(lastIndex, 0, true));
             updateFormFromRow(lastIndex);
+            setEditable(true); // <-- Bổ sung
         }
     }
 
@@ -523,6 +544,7 @@ private void xoaCacDongDaChon() {
             jTable2.setRowSelectionInterval(next, next);
             jTable2.scrollRectToVisible(jTable2.getCellRect(next, 0, true));
             updateFormFromRow(next);
+            setEditable(true); // <-- Bổ sung
         }
     }
 
@@ -533,9 +555,9 @@ private void xoaCacDongDaChon() {
             jTable2.setRowSelectionInterval(back, back);
             jTable2.scrollRectToVisible(jTable2.getCellRect(back, 0, true));
             updateFormFromRow(back);
+            setEditable(true); // <-- Bổ sung
         }
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -966,11 +988,11 @@ private void xoaCacDongDaChon() {
     }//GEN-LAST:event_btnChonTatCaActionPerformed
 
     private void sldGiamGiaAncestorMoved(javax.swing.event.AncestorEvent evt) {//GEN-FIRST:event_sldGiamGiaAncestorMoved
-       
+
     }//GEN-LAST:event_sldGiamGiaAncestorMoved
 
     private void sldGiamGiaStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sldGiamGiaStateChanged
-       
+
     }//GEN-LAST:event_sldGiamGiaStateChanged
 
     private void rdoHetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdoHetActionPerformed
@@ -978,35 +1000,35 @@ private void xoaCacDongDaChon() {
     }//GEN-LAST:event_rdoHetActionPerformed
 
     private void BtnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnThemActionPerformed
-Them();
+        Them();
     }//GEN-LAST:event_BtnThemActionPerformed
 
     private void BtnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSuaActionPerformed
- Sua();
+        Sua();
     }//GEN-LAST:event_BtnSuaActionPerformed
 
     private void BtnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnXoaActionPerformed
- Xoa();
+        Xoa();
     }//GEN-LAST:event_BtnXoaActionPerformed
 
     private void BtnLamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLamMoiActionPerformed
-LamMoi();
+        LamMoi();
     }//GEN-LAST:event_BtnLamMoiActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-backRow();
+        backRow();
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-nextRow();
+        nextRow();
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-firstRow();
+        firstRow();
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-lastRow();
+        lastRow();
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void btnBoChonTatCaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBoChonTatCaActionPerformed
@@ -1018,15 +1040,15 @@ lastRow();
     }//GEN-LAST:event_btnXoaDaChonActionPerformed
 
     private void tblDrinksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDrinksMouseClicked
-int row = tblDrinks.rowAtPoint(evt.getPoint());
-    if (row >= 0) {
-        tblDrinks.setRowSelectionInterval(row, row);
-        filterDrinksByCategory(row);
-    }
+        int row = tblDrinks.rowAtPoint(evt.getPoint());
+        if (row >= 0) {
+            tblDrinks.setRowSelectionInterval(row, row);
+            filterDrinksByCategory(row);
+        }
     }//GEN-LAST:event_tblDrinksMouseClicked
 
     private void lblPhotoPathMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPhotoPathMouseClicked
-     chonAnh();
+        chonAnh();
     }//GEN-LAST:event_lblPhotoPathMouseClicked
 
     /**
@@ -1129,7 +1151,6 @@ CategoryDAO categoryDao = new CategoryDAOImpl();
 //        categories.forEach(d -> model.addRow(new Object[]{d.getName()}));
 //        tblCategories.setRowSelectionInterval(0, 0);
 //    }
-
 //    @Override
 //    public void fillDrinks() {
 //        Category category = categories.get(tblCategories.getSelectedRow());
@@ -1146,7 +1167,6 @@ CategoryDAO categoryDao = new CategoryDAOImpl();
 //            model.addRow(row);
 //        });
 //    }
-
 //    @Override
 //    public void addDrinkToBill() {
 //        String quantity = XDialog.prompt("Số lượng?");
@@ -1161,5 +1181,4 @@ CategoryDAO categoryDao = new CategoryDAOImpl();
 //            new BillDetailDAOImpl().create(detail);
 //        }
 //    }
-
 }

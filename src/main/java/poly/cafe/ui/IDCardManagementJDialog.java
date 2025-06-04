@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package poly.cafe.ui;
+
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import poly.cafe.entity.Cards;
@@ -11,13 +12,16 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import poly.cafe.dao.AccountManagementDao;
 import poly.cafe.entity.Users;
+
 /**
  *
  * @author Home
  */
 public class IDCardManagementJDialog extends javax.swing.JDialog {
-DefaultTableModel tableModel;
-JTable table;
+
+    DefaultTableModel tableModel;
+    JTable table;
+
     /**
      * Creates new form IDCardManagementJDialog
      */
@@ -28,257 +32,271 @@ JTable table;
         initTable();
         loaddatatotable();
     }
+
     private void initTable() {
-    tableModel = new DefaultTableModel(new String[]{"Mã thẻ","Trạng thái","Chọn"}, 0) {
-        Class<?>[] types = new Class<?>[]{String.class, String.class , Boolean.class};
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return types[columnIndex];
-        }
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return column == 2;
-        }
-    };
-    jTable1.setModel(tableModel);
-}
+        tableModel = new DefaultTableModel(new String[]{"Mã thẻ", "Trạng thái", "Chọn"}, 0) {
+            Class<?>[] types = new Class<?>[]{String.class, String.class, Boolean.class};
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 2;
+            }
+        };
+        jTable1.setModel(tableModel);
+    }
+
     public void loaddatatotable() {
-    tableModel.setRowCount(0);
-    IDCardManagementDao dao = new IDCardManagementDao();
-    List<Cards> list = dao.findAll();
-    for (Cards c : list) {
+        tableModel.setRowCount(0);
+        IDCardManagementDao dao = new IDCardManagementDao();
+        List<Cards> list = dao.findAll();
+        for (Cards c : list) {
 
-String statusText;
-if (c.getStatus() == 1) {
-    statusText = "Đang hoạt động";
-} else if (c.getStatus() == 2) {
-    statusText = "Lỗi";
-} else if (c.getStatus() == 3) {
-    statusText = "Thất bại";
-} else {
-    statusText = "Không xác định";
-}
- 
+            String statusText;
+            if (c.getStatus() == 1) {
+                statusText = "Đang hoạt động";
+            } else if (c.getStatus() == 2) {
+                statusText = "Lỗi";
+            } else if (c.getStatus() == 3) {
+                statusText = "Thất bại";
+            } else {
+                statusText = "Không xác định";
+            }
 
-        tableModel.addRow(new Object[]{
-            c.getId(),
-            statusText,
-            false
-        });
-    }
-}
-  private void Them() {
-    IDCardManagementDao dao = new IDCardManagementDao();
-
-    String idStr = txtMaThe.getText().trim(); // Mã thẻ từ ô nhập txtMaThe
-    if (idStr.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập mã thẻ!");
-        return;
+            tableModel.addRow(new Object[]{
+                c.getId(),
+                statusText,
+                false
+            });
+        }
     }
 
-    int id;
-    try {
-        id = Integer.parseInt(idStr);
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Mã thẻ phải là số!");
-        return;
-    }
+    private void Them() {
+        IDCardManagementDao dao = new IDCardManagementDao();
 
-    int status = 0;
-    if (rdoHoatDong.isSelected()) {
-        status = 1;
-    } else if (rdoLoi.isSelected()) {
-        status = 2;
-    } else if (rdoThatBai.isSelected()) {
-        status = 3;
-    } else {
-        JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái!");
-        return;
-    }
-
-    if (dao.checkUsernameExists(idStr)) {
-        JOptionPane.showMessageDialog(this, "Mã thẻ đã tồn tại!");
-        return;
-    }
-
-    Cards card = new Cards();
-    card.setId(id);
-    card.setStatus(status);
-
-    if (dao.insert(card)) {
-        JOptionPane.showMessageDialog(this, "Thêm thẻ thành công!");
-        loaddatatotable(); // Load lại bảng dữ liệu nếu có
-    } else {
-        JOptionPane.showMessageDialog(this, "Thêm thẻ thất bại!");
-    }
-}
-
-
-
-private void Xoa() {
-    String idText = txtMaThe.getText().trim();
-    if (idText.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã thẻ để xóa!");
-        return;
-    }
-
-    try {
-        int id = Integer.parseInt(idText);
-
-        int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa thẻ có ID: " + id + "?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-        if (confirm != JOptionPane.YES_OPTION) {
+        String idStr = txtMaThe.getText().trim(); // Mã thẻ từ ô nhập txtMaThe
+        if (idStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập mã thẻ!");
             return;
         }
 
-        IDCardManagementDao dao = new IDCardManagementDao();
-        Cards c = new Cards();
-        c.setId(id);
-
-        if (dao.delete(c)) {
-            JOptionPane.showMessageDialog(this, "Xóa thành công!");
-            loaddatatotable();
-        } else {
-            JOptionPane.showMessageDialog(this, "Xóa thất bại! Kiểm tra lại Mã thẻ.");
+        int id;
+        try {
+            id = Integer.parseInt(idStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Mã thẻ phải là số!");
+            return;
         }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Mã thẻ phải là số hợp lệ!");
-    }
-}
 
-
-private void Sua() {
-    String idText = txtMaThe.getText().trim();
-    if (idText.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã thẻ để sửa!");
-        return;
-    }
-
-    try {
-        int id = Integer.parseInt(idText);
-        int status;
-
+        int status = 0;
         if (rdoHoatDong.isSelected()) {
             status = 1;
         } else if (rdoLoi.isSelected()) {
-            status = 0;
-        } else if (rdoThatBai.isSelected()) {
             status = 2;
+        } else if (rdoThatBai.isSelected()) {
+            status = 3;
         } else {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái!");
             return;
         }
 
-        Cards c = new Cards();
-        c.setId(id);
-        c.setStatus(status);
-
-        IDCardManagementDao dao = new IDCardManagementDao();
-        if (dao.update(c)) {
-            JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
-            loaddatatotable();
-        } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật thất bại! Kiểm tra lại Mã thẻ.");
+        if (dao.checkUsernameExists(idStr)) {
+            JOptionPane.showMessageDialog(this, "Mã thẻ đã tồn tại!");
+            return;
         }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Mã thẻ phải là số hợp lệ!");
-    }
-}
-private void updateFormFromRow(int row) {
-    if (row >= 0 && row < jTable1.getRowCount()) {
-        // Lấy ID (cột 0)
-        txtMaThe.setText(jTable1.getValueAt(row, 0).toString());
 
-        // Lấy trạng thái (cột 1)
-        String status = (String) jTable1.getValueAt(row, 1);
-        rdoHoatDong.setSelected("Đang hoạt động".equals(status));
-        rdoLoi.setSelected("Lỗi".equals(status));
-        rdoThatBai.setSelected("Thất bại".equals(status));
-    }
-}
-public void firstRow() {
-    if (jTable1.getRowCount() > 0) {
-        jTable1.setRowSelectionInterval(0, 0);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(0, 0, true));
-        updateFormFromRow(0);
-    }
-}
+        Cards card = new Cards();
+        card.setId(id);
+        card.setStatus(status);
 
-public void lastRow() {
-    int lastIndex = jTable1.getRowCount() - 1;
-    if (lastIndex >= 0) {
-        jTable1.setRowSelectionInterval(lastIndex, lastIndex);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(lastIndex, 0, true));
-        updateFormFromRow(lastIndex);
+        if (dao.insert(card)) {
+            JOptionPane.showMessageDialog(this, "Thêm thẻ thành công!");
+            loaddatatotable(); // Load lại bảng dữ liệu nếu có
+        } else {
+            JOptionPane.showMessageDialog(this, "Thêm thẻ thất bại!");
+        }
     }
-}
 
-public void nextRow() {
-    int current = jTable1.getSelectedRow();
-    int next = current + 1;
-    if (next < jTable1.getRowCount()) {
-        jTable1.setRowSelectionInterval(next, next);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(next, 0, true));
-        updateFormFromRow(next);
-    }
-}
+    private void Xoa() {
+        String idText = txtMaThe.getText().trim();
+        if (idText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã thẻ để xóa!");
+            return;
+        }
 
-public void backRow() {
-    int current = jTable1.getSelectedRow();
-    int back = current - 1;
-    if (back >= 0) {
-        jTable1.setRowSelectionInterval(back, back);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(back, 0, true));
-        updateFormFromRow(back);
-    }
-}
-public void BoChonTatCa() {
-    for (int row = 0; row < jTable1.getRowCount(); row++) {
-        jTable1.setValueAt(false, row, 2); // cột 2 checkbox
-    }
-}
+        try {
+            int id = Integer.parseInt(idText);
 
-public void ChonTatCa() {
-    for (int row = 0; row < jTable1.getRowCount(); row++) {
-        jTable1.setValueAt(true, row, 2);
-    }
-}
-public void xoaCacDongDaChon() {
-    IDCardManagementDao dao = new IDCardManagementDao();
-    StringBuilder sb = new StringBuilder();
-    int count = 0;
+            int confirm = JOptionPane.showConfirmDialog(this, "Bạn có chắc muốn xóa thẻ có ID: " + id + "?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+            if (confirm != JOptionPane.YES_OPTION) {
+                return;
+            }
 
-    for (int i = 0; i < jTable1.getRowCount(); i++) {
-        Boolean checked = (Boolean) jTable1.getValueAt(i, 2); // checkbox cột 2
-        if (checked != null && checked) {
-            String id = jTable1.getValueAt(i, 0).toString();
-            if (dao.deleteById(id)) {  // deleteById nhận String hoặc int tùy bạn implement
-                sb.append("- ID: ").append(id).append("\n");
-                count++;
+            IDCardManagementDao dao = new IDCardManagementDao();
+            Cards c = new Cards();
+            c.setId(id);
+
+            if (dao.delete(c)) {
+                JOptionPane.showMessageDialog(this, "Xóa thành công!");
+                loaddatatotable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Xóa thất bại! Kiểm tra lại Mã thẻ.");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Mã thẻ phải là số hợp lệ!");
+        }
+    }
+
+    private void Sua() {
+        String idText = txtMaThe.getText().trim();
+        if (idText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập Mã thẻ để sửa!");
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(idText);
+            int status;
+
+            if (rdoHoatDong.isSelected()) {
+                status = 1;
+            } else if (rdoLoi.isSelected()) {
+                status = 0;
+            } else if (rdoThatBai.isSelected()) {
+                status = 2;
+            } else {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái!");
+                return;
+            }
+
+            Cards c = new Cards();
+            c.setId(id);
+            c.setStatus(status);
+
+            IDCardManagementDao dao = new IDCardManagementDao();
+            if (dao.update(c)) {
+                JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+                loaddatatotable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Cập nhật thất bại! Kiểm tra lại Mã thẻ.");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Mã thẻ phải là số hợp lệ!");
+        }
+    }
+
+    private void updateFormFromRow(int row) {
+        if (row >= 0 && row < jTable1.getRowCount()) {
+            // Lấy ID (cột 0)
+            txtMaThe.setText(jTable1.getValueAt(row, 0).toString());
+
+            // Lấy trạng thái (cột 1)
+            String status = (String) jTable1.getValueAt(row, 1);
+            rdoHoatDong.setSelected("Đang hoạt động".equals(status));
+            rdoLoi.setSelected("Lỗi".equals(status));
+            rdoThatBai.setSelected("Thất bại".equals(status));
+        }
+    }
+
+    private void setEditable(boolean editMode) {
+        // editMode = true: đang chỉnh sửa/xem 1 dòng, false: đang tạo mới
+        txtMaThe.setEnabled(!editMode);         // Mã thẻ không cho sửa khi edit
+        BtnTaoMoi.setEnabled(!editMode);        // Chỉ cho tạo mới khi đang ở chế độ tạo mới
+        BtnCapNhap.setEnabled(editMode);        // Cho phép cập nhật khi edit mode
+        BtnXoa.setEnabled(editMode);            // Cho phép xóa khi edit mode
+    }
+
+    public void firstRow() {
+        if (jTable1.getRowCount() > 0) {
+            jTable1.setRowSelectionInterval(0, 0);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(0, 0, true));
+            updateFormFromRow(0);
+            setEditable(true); // <-- Thêm dòng này
+        }
+    }
+
+    public void lastRow() {
+        int lastIndex = jTable1.getRowCount() - 1;
+        if (lastIndex >= 0) {
+            jTable1.setRowSelectionInterval(lastIndex, lastIndex);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(lastIndex, 0, true));
+            updateFormFromRow(lastIndex);
+            setEditable(true); // <-- Thêm dòng này
+        }
+    }
+
+    public void nextRow() {
+        int current = jTable1.getSelectedRow();
+        int next = current + 1;
+        if (next < jTable1.getRowCount()) {
+            jTable1.setRowSelectionInterval(next, next);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(next, 0, true));
+            updateFormFromRow(next);
+            setEditable(true); // <-- Thêm dòng này
+        }
+    }
+
+    public void backRow() {
+        int current = jTable1.getSelectedRow();
+        int back = current - 1;
+        if (back >= 0) {
+            jTable1.setRowSelectionInterval(back, back);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(back, 0, true));
+            updateFormFromRow(back);
+            setEditable(true); // <-- Thêm dòng này
+        }
+    }
+
+    public void BoChonTatCa() {
+        for (int row = 0; row < jTable1.getRowCount(); row++) {
+            jTable1.setValueAt(false, row, 2); // cột 2 checkbox
+        }
+    }
+
+    public void ChonTatCa() {
+        for (int row = 0; row < jTable1.getRowCount(); row++) {
+            jTable1.setValueAt(true, row, 2);
+        }
+    }
+
+    public void xoaCacDongDaChon() {
+        IDCardManagementDao dao = new IDCardManagementDao();
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
+            Boolean checked = (Boolean) jTable1.getValueAt(i, 2); // checkbox cột 2
+            if (checked != null && checked) {
+                String id = jTable1.getValueAt(i, 0).toString();
+                if (dao.deleteById(id)) {  // deleteById nhận String hoặc int tùy bạn implement
+                    sb.append("- ID: ").append(id).append("\n");
+                    count++;
+                }
             }
         }
+
+        if (count > 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Đã xóa thành công " + count + " thẻ:\n" + sb.toString(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            loaddatatotable(); // load lại bảng
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Không có dòng nào được chọn để xóa.",
+                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
-    if (count > 0) {
-        JOptionPane.showMessageDialog(this,
-            "Đã xóa thành công " + count + " thẻ:\n" + sb.toString(),
-            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-        loaddatatotable(); // load lại bảng
-    } else {
-        JOptionPane.showMessageDialog(this,
-            "Không có dòng nào được chọn để xóa.",
-            "Thông báo", JOptionPane.WARNING_MESSAGE);
+    private void LamMoi() {
+        txtMaThe.setText(null);
+        buttonGroup1.clearSelection();
+        loaddatatotable();
+        setEditable(false); // <-- Thêm dòng này
     }
-}
-
-
-    private void LamMoi(){
-    txtMaThe.setText(null);
-    buttonGroup1.clearSelection();
-    loaddatatotable();
-       }
-
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -569,14 +587,14 @@ public void xoaCacDongDaChon() {
     private void BtnLamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLamMoiActionPerformed
         LamMoi();
     }//GEN-LAST:event_BtnLamMoiActionPerformed
-        // TDO add your handling cOode here:
+    // TDO add your handling cOode here:
 
     private void BtnFIrstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnFIrstActionPerformed
         firstRow();
     }//GEN-LAST:event_BtnFIrstActionPerformed
 
     private void BtnBoChonTatCaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBoChonTatCaActionPerformed
-     BoChonTatCa();
+        BoChonTatCa();
     }//GEN-LAST:event_BtnBoChonTatCaActionPerformed
 
     private void BtnCapNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnCapNhapActionPerformed

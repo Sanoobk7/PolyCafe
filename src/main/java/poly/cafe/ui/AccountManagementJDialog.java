@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package poly.cafe.ui;
+
 import javax.swing.*;
 import java.io.File;
 import java.awt.Image;
@@ -17,9 +18,10 @@ import poly.cafe.entity.Users;
  * @author Admin
  */
 public class AccountManagementJDialog extends javax.swing.JDialog {
-DefaultTableModel tableModel;
-JTable table;
-        
+
+    DefaultTableModel tableModel;
+    JTable table;
+
     /**
      * Creates new form AccountManagement
      */
@@ -31,6 +33,7 @@ JTable table;
         setupEventListeners();
         setLocationRelativeTo(null);
     }
+
     //Username,Password,Enabled,Fullname,Photo,Manager
     private void initTable() {
         // Thiết lập bảng jTable1 với các cột và kiểu dữ liệu tương ứng
@@ -38,113 +41,113 @@ JTable table;
         // Xác định kiểu dữ liệu của từng cột (để hiển thị checkbox ở cột cuối)
         // Chỉ cho phép chỉnh sửa cột cuối cùng (checkbox "Chọn")
         //mấy cái này đều cần cái Dao.java hỗ trợ để làm cho dễ
-    tableModel = new DefaultTableModel(new String[]{"Tên đăng nhập", "Mật khẩu", "Trạng thái", "Họ và tên", "Ảnh", "Vai trò", "Chọn"}, 0) {
-        Class<?>[] types = new Class<?>[]{String.class, String.class, String.class, String.class, String.class, String.class, Boolean.class};
-        @Override
-        public Class<?> getColumnClass(int columnIndex) {
-            return types[columnIndex];
-        }
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return column == 6;
-        }
-    };
-    jTable1.setModel(tableModel);
-    // Gán mô hình dữ liệu cho bảng
-}
+        tableModel = new DefaultTableModel(new String[]{"Tên đăng nhập", "Mật khẩu", "Trạng thái", "Họ và tên", "Ảnh", "Vai trò", "Chọn"}, 0) {
+            Class<?>[] types = new Class<?>[]{String.class, String.class, String.class, String.class, String.class, String.class, Boolean.class};
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return types[columnIndex];
+            }
+
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 6;
+            }
+        };
+        jTable1.setModel(tableModel);
+        // Gán mô hình dữ liệu cho bảng
+    }
 //load thông tin từ cơ sở dữ liệu lên bảng 
-   public void loaddatatotable() {
-    tableModel.setRowCount(0);
-    AccountManagementDao dao = new AccountManagementDao();
-    List<Users> list = dao.findAll();
-    for (Users nv : list) {
-        tableModel.addRow(new Object[]{
-            nv.getUsername(),
-            nv.getPassword(),
-            nv.isEnabled() ? "Hoạt động" : "Vô hiệu",
-            nv.getFullname(),
-            nv.getPhoto(),
-            nv.isManager() ? "Quản lý" : "Nhân viên",
-            false
+
+    public void loaddatatotable() {
+        tableModel.setRowCount(0);
+        AccountManagementDao dao = new AccountManagementDao();
+        List<Users> list = dao.findAll();
+        for (Users nv : list) {
+            tableModel.addRow(new Object[]{
+                nv.getUsername(),
+                nv.getPassword(),
+                nv.isEnabled() ? "Hoạt động" : "Vô hiệu",
+                nv.getFullname(),
+                nv.getPhoto(),
+                nv.isManager() ? "Quản lý" : "Nhân viên",
+                false
+            });
+        }
+    }
+    // code này hình là để tự động gắn hàm mình viết vào nút mà không cần gắn thủ công thì phải,
+
+    private void setupEventListeners() {
+        lblPhoto.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                chonAnh();
+            }
         });
     }
-}
-   // code này hình là để tự động gắn hàm mình viết vào nút mà không cần gắn thủ công thì phải,
-   private void setupEventListeners() {
-    lblPhoto.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
-            chonAnh();
-        }
-    });
-}
     // Biến toàn cục lưu đường dẫn ảnh đã chọn
-private String photoPath = "";
+    private String photoPath = "";
 
-private void chonAnh() {
-    JFileChooser fileChooser = new JFileChooser();
-    fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image files", "jpg", "png", "jpeg", "gif"));
-    if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-        File selectedFile = fileChooser.getSelectedFile();
-        photoPath = selectedFile.getName(); // Lấy tên file (cmm.png)
-        lblPhoto.setText(photoPath); // Hiển thị tên file
-        // Hiển thị ảnh
-        ImageIcon imageIcon = new ImageIcon(selectedFile.getAbsolutePath());
-        Image image = imageIcon.getImage().getScaledInstance(128, 128, Image.SCALE_SMOOTH);
-        lblPhoto.setIcon(new ImageIcon(image));
-    }
-}
-
-private void Them() {
-    AccountManagementDao dao = new AccountManagementDao();
-    String username = txtTenDangNhap.getText().trim();
-    String password = txtMatKhau.getText().trim();
-    String confirmPassword = txtXacNhanMatKhau.getText().trim();
-    String fullname = txtHoVaTen.getText().trim();
-
-    if (username.isEmpty() || password.isEmpty() || fullname.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin!");
-        return;
+    private void chonAnh() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Image files", "jpg", "png", "jpeg", "gif"));
+        if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+            photoPath = selectedFile.getName(); // Lấy tên file (cmm.png)
+            lblPhoto.setText(photoPath); // Hiển thị tên file
+            // Hiển thị ảnh
+            ImageIcon imageIcon = new ImageIcon(selectedFile.getAbsolutePath());
+            Image image = imageIcon.getImage().getScaledInstance(128, 128, Image.SCALE_SMOOTH);
+            lblPhoto.setIcon(new ImageIcon(image));
+        }
     }
 
-if (photoPath == null || photoPath.isEmpty()) {
-    JOptionPane.showMessageDialog(this, "Vui lòng chọn ảnh đại diện!");
-    return;
-}
-if (photoPath.length() > 50) {
+    private void Them() {
+        AccountManagementDao dao = new AccountManagementDao();
+        String username = txtTenDangNhap.getText().trim();
+        String password = txtMatKhau.getText().trim();
+        String confirmPassword = txtXacNhanMatKhau.getText().trim();
+        String fullname = txtHoVaTen.getText().trim();
+
+        if (username.isEmpty() || password.isEmpty() || fullname.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
+
+        if (photoPath == null || photoPath.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn ảnh đại diện!");
+            return;
+        }
+        if (photoPath.length() > 50) {
             JOptionPane.showMessageDialog(this, "Tên file hình ảnh không được vượt quá 50 ký tự!");
             return;
         }
-   
 
+        if (dao.checkUsernameExists(username)) {
+            JOptionPane.showMessageDialog(this, "Tên đăng nhập đã tồn tại!");
+            return;
+        }
 
-if (dao.checkUsernameExists(username)) {
-    JOptionPane.showMessageDialog(this, "Tên đăng nhập đã tồn tại!");
-    return;
-}
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không khớp!");
+            return;
+        }
 
+        Users user = new Users();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setEnabled(rdoHoatDong.isSelected());
+        user.setFullname(fullname);
+        user.setPhoto(photoPath.isEmpty() ? null : photoPath); // Lưu tên file
+        user.setManager(rdoQuanLy.isSelected());
 
-    if (!password.equals(confirmPassword)) {
-        JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không khớp!");
-        return;
+        if (dao.insert(user)) {
+            JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
+            loaddatatotable();
+
+        } else {
+            JOptionPane.showMessageDialog(this, "Thêm tài khoản thất bại!");
+        }
     }
-
-    Users user = new Users();
-    user.setUsername(username);
-    user.setPassword(password);
-    user.setEnabled(rdoHoatDong.isSelected());
-    user.setFullname(fullname);
-    user.setPhoto(photoPath.isEmpty() ? null : photoPath); // Lưu tên file
-    user.setManager(rdoQuanLy.isSelected());
-
-    if (dao.insert(user)) {
-        JOptionPane.showMessageDialog(this, "Thêm tài khoản thành công!");
-        loaddatatotable();
-       
-    } else {
-        JOptionPane.showMessageDialog(this, "Thêm tài khoản thất bại!");
-    }
-}
-
 
     void Xoa() {
         String username = txtTenDangNhap.getText().trim();
@@ -175,149 +178,153 @@ if (dao.checkUsernameExists(username)) {
     }
 
     private void Sua() {
-    AccountManagementDao dao = new AccountManagementDao();
-    String username = txtTenDangNhap.getText().trim();
-    String password = txtMatKhau.getText().trim();
-    String confirmPassword = txtXacNhanMatKhau.getText().trim();
-    String fullname = txtHoVaTen.getText().trim();
+        AccountManagementDao dao = new AccountManagementDao();
+        String username = txtTenDangNhap.getText().trim();
+        String password = txtMatKhau.getText().trim();
+        String confirmPassword = txtXacNhanMatKhau.getText().trim();
+        String fullname = txtHoVaTen.getText().trim();
 
-    if (username.isEmpty() || password.isEmpty() || fullname.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin!");
-        return;
-    }
+        if (username.isEmpty() || password.isEmpty() || fullname.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
 
-    if (!rdoQuanLy.isSelected() && (photoPath == null || photoPath.isEmpty())) {
-        JOptionPane.showMessageDialog(this, "Nhân viên phải có ảnh đại diện!");
-        return;
-    }
+        if (!rdoQuanLy.isSelected() && (photoPath == null || photoPath.isEmpty())) {
+            JOptionPane.showMessageDialog(this, "Nhân viên phải có ảnh đại diện!");
+            return;
+        }
 
-    if (!password.equals(confirmPassword)) {
-        JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không khớp!");
-        return;
-    }
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không khớp!");
+            return;
+        }
 
-    Users user = new Users();
-    user.setUsername(username);
-    user.setPassword(password);
-    user.setEnabled(rdoHoatDong.isSelected());
-    user.setFullname(fullname);
-    user.setPhoto(photoPath.isEmpty() ? null : photoPath);
-    user.setManager(rdoQuanLy.isSelected());
+        Users user = new Users();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setEnabled(rdoHoatDong.isSelected());
+        user.setFullname(fullname);
+        user.setPhoto(photoPath.isEmpty() ? null : photoPath);
+        user.setManager(rdoQuanLy.isSelected());
 
-    if (dao.update(user)) {
-        JOptionPane.showMessageDialog(this, "Cập nhật tài khoản thành công!");
-        loaddatatotable();
-    } else {
-        JOptionPane.showMessageDialog(this, "Cập nhật tài khoản thất bại!");
-    }
-}
-
-
-private void updateFormFromRow(int row) {
-    if (row >= 0 && row < jTable1.getRowCount()) {
-        txtTenDangNhap.setText((String) jTable1.getValueAt(row, 0)); // username
-        txtMatKhau.setText((String) jTable1.getValueAt(row, 1)); // password
-        txtXacNhanMatKhau.setText((String) jTable1.getValueAt(row, 1)); // password
-        txtHoVaTen.setText((String) jTable1.getValueAt(row, 3)); // fullname
-        photoPath = (String) jTable1.getValueAt(row, 4); // photo
-        lblPhoto.setText(photoPath != null ? photoPath : ""); // Hiển thị tên file
-        lblPhoto.setIcon(new ImageIcon("C:\\Users\\Home\\Documents\\NetBeansProjects\\PolyCafe\\src\\main\\resources\\img\\NiggaCat.png"));
-
-        String status = (String) jTable1.getValueAt(row, 2); // enabled
-        rdoHoatDong.setSelected("Hoạt động".equals(status));
-        rdoTamDung.setSelected("Vô hiệu".equals(status));
-
-        String role = (String) jTable1.getValueAt(row, 5); // manager
-        rdoQuanLy.setSelected("Quản lý".equals(role));
-        rdoNhanVien.setSelected("Nhân viên".equals(role));
-    }
-}
-public void firstRow() {
-    if (jTable1.getRowCount() > 0) {
-        jTable1.setRowSelectionInterval(0, 0);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(0, 0, true));
-        updateFormFromRow(0);
-    }
-}
-
-public void lastRow() {
-    int lastIndex = jTable1.getRowCount() - 1;
-    if (lastIndex >= 0) {
-        jTable1.setRowSelectionInterval(lastIndex, lastIndex);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(lastIndex, 0, true));
-        updateFormFromRow(lastIndex);
-    }
-}
-
-public void nextRow() {
-    int current = jTable1.getSelectedRow();
-    int next = current + 1;
-    if (next < jTable1.getRowCount()) {
-        jTable1.setRowSelectionInterval(next, next);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(next, 0, true));
-        updateFormFromRow(next);
-    }
-}
-
-public void backRow() {
-    int current = jTable1.getSelectedRow();
-    int back = current - 1;
-    if (back >= 0) {
-        jTable1.setRowSelectionInterval(back, back);
-        jTable1.scrollRectToVisible(jTable1.getCellRect(back, 0, true));
-        updateFormFromRow(back);
-    }
-}
-public void BoChonTatCa(){
-    for (int row = 0; row < jTable1.getRowCount(); row++) {
-        jTable1.setValueAt(false, row, 6);
-}
-}
-public void ChonTatCa(){   
-    for (int row = 0; row < jTable1.getRowCount(); row++) {
-        jTable1.setValueAt(true, row, 6); // Cột 7 là checkbox
-    } 
-    }
-public void xoaCacDongDaChon() {
-    AccountManagementDao dao = new AccountManagementDao();
-    StringBuilder sb = new StringBuilder();
-    int count = 0;
-
-    for (int i = 0; i < jTable1.getRowCount(); i++) {
-        Boolean checked = (Boolean) jTable1.getValueAt(i, 6); // Cột checkbox
-        if (checked != null && checked) {
-            String username = jTable1.getValueAt(i, 0).toString(); // Cột Username
-            if (dao.deleteByUsername(username)) {
-                sb.append("- ").append(username).append("\n");
-                count++;
-            }
+        if (dao.update(user)) {
+            JOptionPane.showMessageDialog(this, "Cập nhật tài khoản thành công!");
+            loaddatatotable();
+        } else {
+            JOptionPane.showMessageDialog(this, "Cập nhật tài khoản thất bại!");
         }
     }
 
-    if (count > 0) {
-        JOptionPane.showMessageDialog(this,
-            "Đã xóa thành công " + count + " tài khoản:\n" + sb.toString(),
-            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-        loaddatatotable(); // Cập nhật lại bảng sau khi xóa
-    } else {
-        JOptionPane.showMessageDialog(this,
-            "Không có dòng nào được chọn để xóa.",
-            "Thông báo", JOptionPane.WARNING_MESSAGE);
+    private void updateFormFromRow(int row) {
+        if (row >= 0 && row < jTable1.getRowCount()) {
+            txtTenDangNhap.setText((String) jTable1.getValueAt(row, 0)); // username
+            txtMatKhau.setText((String) jTable1.getValueAt(row, 1)); // password
+            txtXacNhanMatKhau.setText((String) jTable1.getValueAt(row, 1)); // password
+            txtHoVaTen.setText((String) jTable1.getValueAt(row, 3)); // fullname
+            photoPath = (String) jTable1.getValueAt(row, 4); // photo
+            lblPhoto.setText(photoPath != null ? photoPath : ""); // Hiển thị tên file
+            lblPhoto.setIcon(new ImageIcon("C:\\Users\\Home\\Documents\\NetBeansProjects\\PolyCafe\\src\\main\\resources\\img\\NiggaCat.png"));
+
+            String status = (String) jTable1.getValueAt(row, 2); // enabled
+            rdoHoatDong.setSelected("Hoạt động".equals(status));
+            rdoTamDung.setSelected("Vô hiệu".equals(status));
+
+            String role = (String) jTable1.getValueAt(row, 5); // manager
+            rdoQuanLy.setSelected("Quản lý".equals(role));
+            rdoNhanVien.setSelected("Nhân viên".equals(role));
+        }
     }
-}
+
+    private void setEditable(boolean editMode) {
+        txtTenDangNhap.setEnabled(!editMode); // Không cho sửa username khi edit
+        BtnThem.setEnabled(!editMode);        // Chỉ cho phép tạo mới khi không ở edit mode
+        BtncapNhap.setEnabled(editMode);      // Cho phép cập nhật khi edit mode
+        BtnXoa.setEnabled(editMode);          // Cho phép xóa khi edit mode
+    }
+
+    public void firstRow() {
+        if (jTable1.getRowCount() > 0) {
+            jTable1.setRowSelectionInterval(0, 0);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(0, 0, true));
+            updateFormFromRow(0);
+            setEditable(true);  // <-- Bổ sung dòng này
+        }
+    }
+
+    public void lastRow() {
+        int lastIndex = jTable1.getRowCount() - 1;
+        if (lastIndex >= 0) {
+            jTable1.setRowSelectionInterval(lastIndex, lastIndex);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(lastIndex, 0, true));
+            updateFormFromRow(lastIndex);
+            setEditable(true);  // <-- Bổ sung dòng này
+        }
+    }
+
+    public void nextRow() {
+        int current = jTable1.getSelectedRow();
+        int next = current + 1;
+        if (next < jTable1.getRowCount()) {
+            jTable1.setRowSelectionInterval(next, next);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(next, 0, true));
+            updateFormFromRow(next);
+            setEditable(true);  // <-- Bổ sung dòng này
+        }
+    }
+
+    public void backRow() {
+        int current = jTable1.getSelectedRow();
+        int back = current - 1;
+        if (back >= 0) {
+            jTable1.setRowSelectionInterval(back, back);
+            jTable1.scrollRectToVisible(jTable1.getCellRect(back, 0, true));
+            updateFormFromRow(back);
+            setEditable(true);  // <-- Bổ sung dòng này
+        }
+    }
+
+    public void BoChonTatCa() {
+        for (int row = 0; row < jTable1.getRowCount(); row++) {
+            jTable1.setValueAt(false, row, 6);
+        }
+    }
+
+    public void ChonTatCa() {
+        for (int row = 0; row < jTable1.getRowCount(); row++) {
+            jTable1.setValueAt(true, row, 6); // Cột 7 là checkbox
+        }
+    }
+
+    public void xoaCacDongDaChon() {
+        AccountManagementDao dao = new AccountManagementDao();
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+
+        for (int i = 0; i < jTable1.getRowCount(); i++) {
+            Boolean checked = (Boolean) jTable1.getValueAt(i, 6); // Cột checkbox
+            if (checked != null && checked) {
+                String username = jTable1.getValueAt(i, 0).toString(); // Cột Username
+                if (dao.deleteByUsername(username)) {
+                    sb.append("- ").append(username).append("\n");
+                    count++;
+                }
+            }
+        }
+
+        if (count > 0) {
+            JOptionPane.showMessageDialog(this,
+                    "Đã xóa thành công " + count + " tài khoản:\n" + sb.toString(),
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            loaddatatotable(); // Cập nhật lại bảng sau khi xóa
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Không có dòng nào được chọn để xóa.",
+                    "Thông báo", JOptionPane.WARNING_MESSAGE);
+        }
+    }
 //gay rizz
 
-
-
-
 // Gán sự kiện cho các nút (giả sử bạn có các nút btnFirst, btnLast, btnNext, btnBack)
-
-
-
-
-
-
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -693,7 +700,7 @@ public void xoaCacDongDaChon() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void BtnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBackActionPerformed
-       backRow();
+        backRow();
     }//GEN-LAST:event_BtnBackActionPerformed
 
     private void lblPhotoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPhotoMouseClicked
@@ -701,25 +708,25 @@ public void xoaCacDongDaChon() {
     }//GEN-LAST:event_lblPhotoMouseClicked
 
     private void BtnLamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnLamMoiActionPerformed
-txtHoVaTen.setText(null);
-txtMatKhau.setText(null);
-txtTenDangNhap.setText(null);
-txtXacNhanMatKhau.setText(null);
-buttonGroup1.clearSelection();
-buttonGroup2.clearSelection();
-lblPhoto.setIcon(new ImageIcon("C:\\Users\\Home\\Documents\\NetBeansProjects\\PolyCafe\\src\\main\\resources\\img\\NiggaCat.png"));
+        txtHoVaTen.setText(null);
+        txtMatKhau.setText(null);
+        txtTenDangNhap.setText(null);
+        txtXacNhanMatKhau.setText(null);
+        buttonGroup1.clearSelection();
+        buttonGroup2.clearSelection();
+        lblPhoto.setIcon(new ImageIcon("C:\\Users\\Home\\Documents\\NetBeansProjects\\PolyCafe\\src\\main\\resources\\img\\NiggaCat.png"));
     }//GEN-LAST:event_BtnLamMoiActionPerformed
 
     private void BtnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnThemActionPerformed
-Them();
+        Them();
     }//GEN-LAST:event_BtnThemActionPerformed
 
     private void BtncapNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtncapNhapActionPerformed
-Sua();
+        Sua();
     }//GEN-LAST:event_BtncapNhapActionPerformed
 
     private void BtnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnXoaActionPerformed
-Xoa();
+        Xoa();
     }//GEN-LAST:event_BtnXoaActionPerformed
 
     private void AccTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AccTableMouseClicked
@@ -743,7 +750,7 @@ Xoa();
     }//GEN-LAST:event_XoaCacMucDuocChonActionPerformed
 
     private void BtnChonTatCaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnChonTatCaActionPerformed
-       ChonTatCa();
+        ChonTatCa();
     }//GEN-LAST:event_BtnChonTatCaActionPerformed
 
     private void BtnBoChonTatCaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnBoChonTatCaActionPerformed
